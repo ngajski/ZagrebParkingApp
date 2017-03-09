@@ -1,5 +1,6 @@
 package hr.fer.zagrebparkingapp;
 
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.support.annotation.NonNull;
@@ -31,6 +32,10 @@ public class MainActivity extends AppCompatActivity implements
         carInfoTextView = (TextView) findViewById(R.id.carInfo);
         currentLocationTextView = (TextView) findViewById(R.id.currentLocation);
         mapView = (MapView) findViewById(R.id.mapView);
+
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
+
     }
 
     @Override

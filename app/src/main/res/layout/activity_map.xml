@@ -1,0 +1,52 @@
+<LinearLayout xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="279dp"
+        tools:context="hr.fer.zagrebparkingapp.MapActivity" />
+
+    <TextView
+        android:id="@+id/zoneEditText"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Trenutna zona:"
+        android:textSize="25dp"/>
+
+    <TextView
+        android:id="@+id/priceEditText"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Cijena (1 sat):"
+        android:textSize="25dp"/>
+
+    <Spinner
+        android:id="@+id/regSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/payButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Plati" />
+    </RelativeLayout>
+
+
+</LinearLayout>
