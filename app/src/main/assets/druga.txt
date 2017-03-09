@@ -1,0 +1,31 @@
+		fervelikododrziceve...josmalikut...prvoprovjera4.2.
+			GL 45.8050 15.9574
+			GD 45.8050 15.9932
+			DL 45.7943 15.9574
+			DD 45.7943 15.9932
+		dvamaladrziceva/sla...prvi
+			GL 45.7956 15.9916
+			GD 45.7956 16.0009
+			DL 45.7941 15.9916
+			DD 45.7941 15.0009
+		dvamaladrziceva/sla...drugi
+			GL 45.7944 15.9947
+			GD 45.7944 16.0008
+			DL 45.7923 15.9947
+			DD 45.7923 16.0008
+		dvamaladrziceva/sla...treci
+			GL 45.7923 15.9947
+			GD 45.7923 16.0022
+			DL 45.7900 15.9947
+			DD 45.7900 16.0022
+		drzicevahajnclova
+			GL 45.8050 15.9932
+			GD 45.8050 16.0075
+			DL 45.7963 15.9932
+			DD 45.7963 16.0075
+		drzicevahajnclovadva
+			GL 45.8020 16.0075
+			GD 45.8020 16.0128
+			DL 45.7963 16.0075
+			DD 45.7963 16.0128
+		kraj
