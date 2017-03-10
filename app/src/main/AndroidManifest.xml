@@ -29,7 +29,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC71VcBjYcCjDXzCUK7MkhZ_FzN1BeHZfc" />
 
-        <activity android:name=".MainActivity">
+
+        <activity android:name=".MapActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,9 +46,7 @@
              You can define the keys for the debug and release targets in src/debug/ and src/release/. 
         -->
 
-        <activity
-            android:name=".MapActivity"
-            android:label="@string/title_activity_map"></activity>
+
     </application>
 
 </manifest>
