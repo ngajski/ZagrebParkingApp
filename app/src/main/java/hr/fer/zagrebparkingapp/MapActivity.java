@@ -31,11 +31,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
-       GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+       GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
 
     private GoogleMap mMap;
 
@@ -46,6 +47,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private double currLat;
     private double currLong;
+
+    private String currZone;
 
     private Spinner registrationSpinner;
     private TextView zoneTextView;
@@ -223,7 +226,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLong),15));
 
-
         zoneTextView.setText("Koordinate: (" + currLat + " , " + currLong + ")");
     }
 
@@ -240,6 +242,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         registrationSpinner.setAdapter(dataAdapter);
     }
 
-
+    public void findZone(double latitude, double longitude) throws IOException {//ne treba posebna metoda, al jebu exceptioni
+        currZone = FindZone.provjeri(latitude, longitude);
+    }
 
 }
