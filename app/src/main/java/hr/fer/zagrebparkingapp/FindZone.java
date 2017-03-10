@@ -1,5 +1,7 @@
 package hr.fer.zagrebparkingapp;
 
+import android.content.res.AssetManager;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,17 +12,26 @@ import java.io.InputStream;
 
 public class FindZone {
 
-    public static void main(String[] args ) throws IOException {
-        //double latitude = 0, longitude = 0;
-        String zona = provjeri(45.7940, 16.0007); //testne koordinate
-        System.out.print(zona);
+    private double latitude;
+    private double longitude;
+    private String zona;
+
+    public FindZone(double latitude, double longitude, String zona){
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.zona = zona;
+    }
+
+    public String getZona() throws IOException{
+        this.zona = provjeri(latitude, longitude);
+        return this.zona;
     }
 
     public static String provjeri (double latitude, double longitude) throws IOException{
-        for(int i = 0; i < 4; i++){//6 zona
+        for(int i = 0; i < 6; i++){//6 zona
 
-            if(i == 0){
-                InputStream iS = resources.getAssets().open("treca.txt"); // ovo treba importati
+          /**  if(i == 0){
+                //InputStream iS = resources.getAssets().open("treca.txt"); // ovo treba importati
                 BufferedReader ulaz = new BufferedReader(new InputStreamReader(iS));
                 //System.setIn(new FileInputStream("C:/Users/Pandek/Desktop/treca.txt"));
                 //BufferedReader ulaz = new BufferedReader(new InputStreamReader(System.in));
@@ -29,7 +40,7 @@ public class FindZone {
                     return "treca";
                 }
             } else if(i == 1){
-                InputStream iS = resources.getAssets().open("cetiri_jedan.txt"); // ovo treba importati
+                //InputStream iS = resources.getAssets().open("cetiri_jedan.txt"); // ovo treba importati
                 BufferedReader ulaz = new BufferedReader(new InputStreamReader(iS));
                 //System.setIn(new FileInputStream("C:/Users/Pandek/Desktop/cetiri_jedan.txt"));
                 //BufferedReader ulaz = new BufferedReader(new InputStreamReader(System.in));
@@ -38,7 +49,7 @@ public class FindZone {
                     return "cetiri_jedan";
                 }
             } else if(i == 2){
-                InputStream iS = resources.getAssets().open("cetiri_dva.txt"); // ovo treba importati
+                //InputStream iS = resources.getAssets().open("cetiri_dva.txt"); // ovo treba importati
                 BufferedReader ulaz = new BufferedReader(new InputStreamReader(iS));
                 //System.setIn(new FileInputStream("C:/Users/Pandek/Desktop/cetiri_dva.txt"));
                 //BufferedReader ulaz = new BufferedReader(new InputStreamReader(System.in));
@@ -47,8 +58,8 @@ public class FindZone {
                     return "cetiri_dva";
                 }
             } else if(i == 3){
-                InputStream iS = resources.getAssets().open("druga.txt"); // ovo treba importati
-                BufferedReader ulaz = new BufferedReader(new InputStreamReader(iS));
+                // iS = resources.getAssets().open("druga.txt"); // ovo treba importati
+                //BufferedReader ulaz = new BufferedReader(new InputStreamReader(iS));
                 //System.setIn(new FileInputStream("C:/Users/Pandek/Desktop/druga.txt"));
                 //BufferedReader ulaz = new BufferedReader(new InputStreamReader(System.in));
                 boolean nasao = unutra(latitude, longitude, ulaz);
@@ -63,14 +74,14 @@ public class FindZone {
                     return "jedan_jedan";
                 }
             } else if(i == 5){
-                InputStream iS = resources.getAssets().open("jedan_jedan.txt"); // ovo treba importati
-                BufferedReader ulaz = new BufferedReader(new InputStreamReader(iS));
+                //nputStream iS = resources.getAssets().open("jedan_jedan.txt"); // ovo treba importati
+                //BufferedReader ulaz = new BufferedReader(new InputStreamReader(iS));
 
                 boolean nasao = unutra(latitude, longitude, ulaz);
                 if(nasao){
                     return "prva";
                 }
-            }
+            }**/
         }
         return null;
     }
