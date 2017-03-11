@@ -2,6 +2,7 @@ package hr.fer.zagrebparkingapp;
 
 import android.content.Context;
 import android.content.IntentSender;
+import android.content.res.AssetManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -31,7 +32,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -242,8 +246,99 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         registrationSpinner.setAdapter(dataAdapter);
     }
 
-    public void findZone(double latitude, double longitude) throws IOException {//ne treba posebna metoda, al jebu exceptioni
-        currZone = FindZone.provjeri(latitude, longitude);
+
+    public static String provjeri (Context context, double latitude, double longitude) throws IOException{
+        for(int i = 0; i < 7; i++){//7 zona
+
+            if(i == 0){
+                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("treca.txt")));
+                boolean nasao = unutra(latitude, longitude, ulaz);
+                if(nasao){
+                    return "treca";
+                }
+            } else if(i == 1){
+                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("cetiri_jedan.txt")));
+                boolean nasao = unutra(latitude, longitude, ulaz);
+                if(nasao){
+                    return "cetiri_jedan";
+                }
+            } else if(i == 2){
+                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("cetiri_dva.txt")));
+                boolean nasao = unutra(latitude, longitude, ulaz);
+                if(nasao){
+                    return "cetiri_dva";
+                }
+            } else if(i == 3){
+                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("paromlin.txt")));
+                boolean nasao = unutra(latitude, longitude, ulaz);
+                if(nasao){
+                    return "paromlin";
+                }
+            } else if(i == 4){
+                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("prva.txt")));
+                boolean nasao = unutra(latitude, longitude, ulaz);
+                if(nasao){
+                    return "prva";
+                }
+            } else if(i == 5){
+                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("jedan_jedan.txt")));
+                boolean nasao = unutra(latitude, longitude, ulaz);
+                if(nasao){
+                    return "jedan_jedan";
+                }
+            } else if(i == 6) {
+                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("druga.txt")));
+                boolean nasao = unutra(latitude, longitude, ulaz);
+                if (nasao) {
+                    return "druga";
+                }
+            }
+        }
+        return null;
+    }
+
+    public static boolean unutra(double latitude, double longitude, BufferedReader ulaz) throws IOException{
+        String line = null;
+        boolean pao = false;
+        int linija = 0;
+        do{
+            line = ulaz.readLine().trim();
+            String[] podaci = line.split(" ");
+            if(podaci.length == 1){
+                linija = 0;
+                pao = false;
+            }
+            if(!(podaci.length == 1)){
+                linija++;
+                double lat = Double.parseDouble(podaci[1]);
+                double lon = Double.parseDouble(podaci[2]);
+                if((latitude > lat || longitude < lon) && linija == 1){
+                    pao = true;
+                    line = ulaz.readLine();
+                    line = ulaz.readLine();
+                    line = ulaz.readLine();
+                    continue;
+                } else if((latitude > lat || longitude > lon) && linija == 2){
+                    pao = true;
+                    line = ulaz.readLine();
+                    line = ulaz.readLine();
+                    continue;
+                } else if((latitude < lat || longitude < lon) && linija == 3){
+                    pao = true;
+                    line = ulaz.readLine();
+                    continue;
+                } else if((latitude < lat || longitude > lon) && linija == 4){
+                    pao = true;
+                    continue;
+                } else {
+                    if(linija == 4 && !pao)
+                        return true;
+                }
+            }
+
+        } while(!line.equals("kraj"));
+
+        return false;
     }
 
 }

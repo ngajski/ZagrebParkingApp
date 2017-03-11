@@ -30,9 +30,13 @@ public class FindZone {
     public static String provjeri (double latitude, double longitude) throws IOException{
         for(int i = 0; i < 6; i++){//6 zona
 
-          /**  if(i == 0){
+            /**if(i == 0){
+                AssetManager am = context.getAssets();
+                InputStream is = am.open("test.txt");
+               // AssetManager assetManager = getAssets();
+                //InputStream ims = assetManager.open("helloworld.txt");
                 //InputStream iS = resources.getAssets().open("treca.txt"); // ovo treba importati
-                BufferedReader ulaz = new BufferedReader(new InputStreamReader(iS));
+               // BufferedReader ulaz = new BufferedReader(new InputStreamReader(iS));
                 //System.setIn(new FileInputStream("C:/Users/Pandek/Desktop/treca.txt"));
                 //BufferedReader ulaz = new BufferedReader(new InputStreamReader(System.in));
                 boolean nasao = unutra(latitude, longitude, ulaz);
