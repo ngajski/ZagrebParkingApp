@@ -64,9 +64,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private TextView priceTextView;
     private Button payButton;
 
+    private boolean isStartup = true;
+
     private Context context;
 
-    List<Zone> zones;
+    private List<Zone> zones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,22 +246,32 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 //        currLocationMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(currLat, currLong))
 //                .title("My Location").icon(BitmapDescriptorFactory
 //                        .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+        if(isStartup) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLong),15));
+            isStartup = false;
+        }
 //        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLong),15));
 
-        zoneTextView.setText("Koordinate: (" + currLat + " , " + currLong + ")");
+//        zoneTextView.setText("Koordinate: (" + currLat + " , " + currLong + ")");
 
         Coordinate c = new Coordinate(currLat, currLong);
 
+        boolean found = false;
         for(Zone z: zones) {
             if(z.isCoordinateInZone(c)) {
                 currZone = z.getName();
+                found = true;
                 break;
             }
         }
 
         //currZone = provjeri(currLat, currLong);
+        if(found) {
+            zoneTextView.setText(currZone);
+        } else {
+            zoneTextView.setText("Trenutno se ne nalazite ni u jednoj zoni");
+        }
 
-        zoneTextView.setText(currZone);
     }
 
 

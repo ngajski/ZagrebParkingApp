@@ -62,6 +62,7 @@ public class Zone {
             BufferedReader fileReader;
 
             for(String file : files) {
+                if(!file.endsWith(".txt")) continue;
                 fileReader = new BufferedReader(new InputStreamReader(am.open(file)));
                 String zoneName = file.substring(0, file.indexOf('.'));
                 Zone z = new Zone(zoneName);
@@ -90,7 +91,9 @@ public class Zone {
                     }
                 }
                 zones.add(z);
+                fileReader.close();
             }
+
             return zones;
 
         } catch (IOException e) {
