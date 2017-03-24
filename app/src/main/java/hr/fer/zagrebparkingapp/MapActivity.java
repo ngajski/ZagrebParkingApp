@@ -1,6 +1,8 @@
 package hr.fer.zagrebparkingapp;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.AssetManager;
 import android.hardware.Sensor;
@@ -12,6 +14,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -69,6 +73,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         priceTextView = (TextView) findViewById(R.id.priceEditText);
         payButton = (Button) findViewById(R.id.payButton);
 
+        buildGoogleApiClient();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -89,13 +95,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
 
         try {
+
             mMap.setMyLocationEnabled(true);
 
         } catch (SecurityException ex) {
             Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
         }
 
-       buildGoogleApiClient();
+
 
 //        mLocationRequest = LocationRequest.create()
 //                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -244,6 +251,23 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         registrationSpinner.setAdapter(dataAdapter);
+
+        registrationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                final Intent i;
+                if (position == 1) {
+                    i = new Intent(MapActivity.this, MapActivity.class);
+                    startActivity(i);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
     }
 
 
