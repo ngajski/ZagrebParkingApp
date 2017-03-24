@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -63,6 +64,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private TextView priceTextView;
     private Button payButton;
 
+    private Context context;
+
+    List<Zone> zones;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +78,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         priceTextView = (TextView) findViewById(R.id.priceEditText);
         payButton = (Button) findViewById(R.id.payButton);
 
+        context = this.getApplicationContext();
+
         buildGoogleApiClient();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -81,6 +88,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mapFragment.getMapAsync(this);
 
         addItemsToRegistrationSpinner();
+
+        zones = new LinkedList<>(Zone.loadCoordinates(context.getAssets()));
 
     }
 
@@ -226,24 +235,38 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
        // mLastLocation = location;
 
         //remove previous current location Marker
-        if (currLocationMarker != null){
-            currLocationMarker.remove();
-        }
+//        if (currLocationMarker != null){
+//            currLocationMarker.remove();
+//        }
 
         currLat = location.getLatitude();
         currLong = location.getLongitude();
-        currLocationMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(currLat, currLong))
-                .title("My Location").icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLong),15));
+//        currLocationMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(currLat, currLong))
+//                .title("My Location").icon(BitmapDescriptorFactory
+//                        .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLong),15));
 
         zoneTextView.setText("Koordinate: (" + currLat + " , " + currLong + ")");
+
+        Coordinate c = new Coordinate(currLat, currLong);
+
+        for(Zone z: zones) {
+            if(z.isCoordinateInZone(c)) {
+                currZone = z.getName();
+                break;
+            }
+        }
+
+        //currZone = provjeri(currLat, currLong);
+
+        zoneTextView.setText(currZone);
     }
 
 
 
     private void addItemsToRegistrationSpinner() {
         List<String> list = new ArrayList<String>();
+        list.add("Dodaj novi automobil...");
         list.add("list 1");
         list.add("list 2");
         list.add("list 3");
@@ -251,13 +274,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         registrationSpinner.setAdapter(dataAdapter);
+        registrationSpinner.setSelection(1,true);
 
         registrationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 final Intent i;
-                if (position == 1) {
-                    i = new Intent(MapActivity.this, MapActivity.class);
+                if (position == 0) {
+                    i = newIntent();
                     startActivity(i);
                 }
             }
@@ -270,53 +294,65 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
+    private Intent newIntent(){
+        return new Intent(this, MainActivity.class);
+    }
 
-    public static String provjeri (Context context, double latitude, double longitude) throws IOException{
+
+    public String provjeri (double latitude, double longitude){
         for(int i = 0; i < 7; i++){//7 zona
+            try {
+                if(i == 0){
+                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("treca.txt")));
+//                    AssetManager am = getAssets();
+//                    InputStream is = am.open("treca.txt");
+//                   // byte[] buffer = Arrays.;
+                    //is.read(buffer);
+                    boolean nasao = unutra(latitude, longitude, ulaz);
+                    if(nasao){
+                        return "treca";
+                    }
+                } else if(i == 1){
+                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("cetiri_jedan.txt")));
+                    boolean nasao = unutra(latitude, longitude, ulaz);
+                    if(nasao){
+                        return "cetiri_jedan";
+                    }
+                } else if(i == 2){
+                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("cetiri_dva.txt")));
+                    boolean nasao = unutra(latitude, longitude, ulaz);
+                    if(nasao){
+                        return "cetiri_dva";
+                    }
+                } else if(i == 3){
+                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("paromlin.txt")));
+                    boolean nasao = unutra(latitude, longitude, ulaz);
+                    if(nasao){
+                        return "paromlin";
+                    }
+                } else if(i == 4){
+                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("prva.txt")));
+                    boolean nasao = unutra(latitude, longitude, ulaz);
+                    if(nasao){
+                        return "prva";
+                    }
+                } else if(i == 5){
+                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("jedan_jedan.txt")));
+                    boolean nasao = unutra(latitude, longitude, ulaz);
+                    if(nasao){
+                        return "jedan_jedan";
+                    }
+                } else if(i == 6) {
+                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("druga.txt")));
+                    boolean nasao = unutra(latitude, longitude, ulaz);
+                    if (nasao) {
+                        return "druga";
+                    }
+                }
+            } catch(IOException ex){
 
-            if(i == 0){
-                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("treca.txt")));
-                boolean nasao = unutra(latitude, longitude, ulaz);
-                if(nasao){
-                    return "treca";
-                }
-            } else if(i == 1){
-                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("cetiri_jedan.txt")));
-                boolean nasao = unutra(latitude, longitude, ulaz);
-                if(nasao){
-                    return "cetiri_jedan";
-                }
-            } else if(i == 2){
-                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("cetiri_dva.txt")));
-                boolean nasao = unutra(latitude, longitude, ulaz);
-                if(nasao){
-                    return "cetiri_dva";
-                }
-            } else if(i == 3){
-                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("paromlin.txt")));
-                boolean nasao = unutra(latitude, longitude, ulaz);
-                if(nasao){
-                    return "paromlin";
-                }
-            } else if(i == 4){
-                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("prva.txt")));
-                boolean nasao = unutra(latitude, longitude, ulaz);
-                if(nasao){
-                    return "prva";
-                }
-            } else if(i == 5){
-                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("jedan_jedan.txt")));
-                boolean nasao = unutra(latitude, longitude, ulaz);
-                if(nasao){
-                    return "jedan_jedan";
-                }
-            } else if(i == 6) {
-                BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("druga.txt")));
-                boolean nasao = unutra(latitude, longitude, ulaz);
-                if (nasao) {
-                    return "druga";
-                }
             }
+
         }
         return null;
     }
@@ -325,8 +361,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         String line = null;
         boolean pao = false;
         int linija = 0;
-        do{
-            line = ulaz.readLine().trim();
+//        do{
+//                line = ulaz.readLine().trim();
+
+        while((line=ulaz.readLine())!=null){
+            line=line.trim();
             String[] podaci = line.split(" ");
             if(podaci.length == 1){
                 linija = 0;
@@ -359,8 +398,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                         return true;
                 }
             }
+        }
 
-        } while(!line.equals("kraj"));
+
+//        } while(!line.equals("kraj"));
 
         return false;
     }

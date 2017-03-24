@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements
         currentLocationTextView = (TextView) findViewById(R.id.currentLocation);
         mapView = (MapView) findViewById(R.id.mapView);
 
-        Intent intent = new Intent(this, MapActivity.class);
+        Intent intent = new Intent(this, CarsActivity.class);
         startActivity(intent);
 
     }
