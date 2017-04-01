@@ -307,7 +307,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     private Intent newIntent(){
-        return new Intent(this, MainActivity.class);
+        return new Intent(this, CarsActivity.class);
     }
 
 
