@@ -21,6 +21,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +40,16 @@ public class CarsActivity extends AppCompatActivity {
     private Button mButtonDodaj;
     private Button mButtonZavrsi;
 
+    private FirebaseDatabase database;
+    private DatabaseReference carsRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cars);
+
+        database = FirebaseDatabase.getInstance();
+        carsRef = database.getReference("cars");
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setLogo(R.drawable.icon_car);
@@ -59,20 +71,28 @@ public class CarsActivity extends AppCompatActivity {
             alertDialog("Dodavanje novog automobila", -1);
         });
 
-        mButtonZavrsi = (Button) findViewById(R.id.zavrsi);
-        mButtonZavrsi.setOnClickListener(new View.OnClickListener() {
+        carsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CarsActivity.this, MapActivity.class);
-                ArrayList<String> listOfCars = new ArrayList<String>();
-
-                for(CarInfo info : cars) {
-                    listOfCars.add(info.getName() + ":" + info.getRegistrationNumber());
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                cars.clear();
+                for(DataSnapshot child : dataSnapshot.getChildren()) {
+                    cars.add(child.getValue(CarInfo.class));
                 }
-                intent.putStringArrayListExtra("cars", listOfCars);
-                setResult(RESULT_OK);
-                finish();
+                arrayAdapter.notifyDataSetChanged();
             }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        mButtonZavrsi = (Button) findViewById(R.id.zavrsi);
+        mButtonZavrsi.setOnClickListener(v -> {
+            carsRef.setValue(cars);
+            Intent intent = new Intent();
+            setResult(RESULT_OK, intent);
+            finish();
         });
 
     }

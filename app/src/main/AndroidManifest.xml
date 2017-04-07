@@ -37,7 +37,9 @@
             android:icon="@drawable/icon_car"
             android:label="ZagrepParkingApp">
             <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="hr.fer.zagrebparkingapp.CarsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+
             </intent-filter>
         </activity>
         <activity

@@ -9,6 +9,9 @@ public class CarInfo {
     private String name;
     private String registrationNumber;
 
+    public CarInfo() {
+    }
+
     public CarInfo(String name, String registrationNumber) {
         this.name = name;
         this.registrationNumber = registrationNumber;

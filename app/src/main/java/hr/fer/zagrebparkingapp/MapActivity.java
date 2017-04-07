@@ -36,6 +36,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -61,7 +66,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private String currZone;
 
-    private ArrayList<String> cars;
     private ArrayAdapter<String> dataAdapter;
     private Spinner registrationSpinner;
     private TextView zoneTextView;
@@ -77,18 +81,24 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     public static final String registracija = "ZG6230DV";
 
+    FirebaseDatabase database;
+    DatabaseReference carsRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        registrationSpinner = (Spinner) findViewById(R.id.regSpinner);
-        cars = new ArrayList<>();
+        database = FirebaseDatabase.getInstance();
+        carsRef = database.getReference("cars");
+
+
         zoneTextView = (TextView) findViewById(R.id.zoneEditText);
         priceTextView = (TextView) findViewById(R.id.priceEditText);
         payButton = (Button) findViewById(R.id.payButton);
 
         context = this.getApplicationContext();
+
 
         buildGoogleApiClient();
 
@@ -97,7 +107,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        addItemsToRegistrationSpinner();
+        registrationSpinner = (Spinner) findViewById(R.id.regSpinner);
+        dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, android.R.id.text1);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        registrationSpinner.setAdapter(dataAdapter);
 
         zones = new LinkedList<>(Zone.loadCoordinates(context.getAssets()));
 
@@ -111,7 +126,61 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 }
             }
         });
+        carsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                dataAdapter.clear();
+                dataAdapter.add("Dodaj novi automobil...");
 
+                List<CarInfo> cars = new ArrayList<>();
+                for(DataSnapshot child : dataSnapshot.getChildren()) {
+                    cars.add(child.getValue(CarInfo.class));
+                }
+
+                if(cars == null) {
+                    return;
+                }
+
+                for(CarInfo info : cars) {
+                    dataAdapter.add(info.getName() + ":" + info.getRegistrationNumber());
+                }
+                dataAdapter.notifyDataSetChanged();
+                registrationSpinner.setSelection(1, true);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Error", "Failed to read value.", databaseError.toException());
+            }
+        });
+
+        registrationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                final Intent i;
+                if (position == 0) {
+                    i = newIntent();
+                    startActivity(i);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK) {
+            if (dataAdapter.getCount() == 1) {
+                registrationSpinner.setSelected(false);
+            } else {
+                registrationSpinner.setSelection(1, true);
+            }
+        }
     }
 
     public String generateSMS() throws IOException{
@@ -214,22 +283,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             mGoogleApiClient.disconnect();
         }
 
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode == RESULT_OK) {
-            List<String> list = data.getStringArrayListExtra("cars");
-
-            cars.clear();
-
-            for(String s : list) {
-                cars.add(s);
-            }
-            dataAdapter.notifyDataSetChanged();
-        }
     }
 
     @Override
@@ -339,38 +392,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
-
-
-    private void addItemsToRegistrationSpinner() {
-        cars.add("Dodaj novi automobil...");
-        cars.add("list1");
-
-        dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, cars);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        registrationSpinner.setAdapter(dataAdapter);
-        registrationSpinner.setSelection(1,true);
-
-        registrationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                final Intent i;
-                if (position == 0) {
-                    i = newIntent();
-                    startActivity(i);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-    }
-
     private Intent newIntent(){
-        return new Intent(this, DBTestActivity.class);
+        return new Intent("hr.fer.zagrebparkingapp.CarsActivity");
+
     }
 
 
