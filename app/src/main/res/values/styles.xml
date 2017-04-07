@@ -1,5 +1,4 @@
 <resources>
-
     <style name="TextAppearence.App.TextInputLayout" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/colorAccent</item>
     </style>
@@ -11,13 +10,4 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">@color/colorPrimary</item>
     </style>
-
-    <style name="ZagrebParkingApp.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="ZagrebParkingApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="ZagrebParkingApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
