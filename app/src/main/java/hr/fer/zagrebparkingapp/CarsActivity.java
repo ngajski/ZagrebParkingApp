@@ -2,9 +2,11 @@ package hr.fer.zagrebparkingapp;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -32,14 +34,11 @@ public class CarsActivity extends AppCompatActivity {
     private Button mButtonDodaj;
     private Button mButtonZavrsi;
 
-
-    //TODO: Konstruktor u kojem cemo poslat listu iz spinnera
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cars);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setLogo(R.drawable.icon_car);
         actionBar.setDisplayUseLogoEnabled(true);
@@ -61,7 +60,20 @@ public class CarsActivity extends AppCompatActivity {
         });
 
         mButtonZavrsi = (Button) findViewById(R.id.zavrsi);
-        //TODO: napisat listener za zavrsavanje uredivanja
+        mButtonZavrsi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CarsActivity.this, MapActivity.class);
+                ArrayList<String> listOfCars = new ArrayList<String>();
+
+                for(CarInfo info : cars) {
+                    listOfCars.add(info.getName() + ":" + info.getRegistrationNumber());
+                }
+                intent.putStringArrayListExtra("cars", listOfCars);
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
 
     }
 
@@ -71,6 +83,7 @@ public class CarsActivity extends AppCompatActivity {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
+
                 TextView text1 = (TextView) view.findViewById(R.id.textViewListView1);
                 TextView text2 = (TextView) view.findViewById(R.id.textViewListView2);
 
@@ -103,7 +116,6 @@ public class CarsActivity extends AppCompatActivity {
         final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
         switch (item.getItemId()) {
-
             case R.id.edit:
                 editAction(info);
                 return true;
@@ -156,18 +168,15 @@ public class CarsActivity extends AppCompatActivity {
         }
 
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
         alert.setIcon(R.drawable.icon_car).setTitle(title).setView(textEntryView)
-                .setPositiveButton("Prekini",
-                (dialog, whichButton) -> {
-                    processPrekiniClick(dialog);
-                }).setNegativeButton("Spremi",
-                (dialog, whichButton) -> {
+                .setPositiveButton("Prekini",  (dialog, whichButton) -> {
+                    processCancelClick(alert, dialog);
+                }).setNegativeButton("Spremi", (dialog, whichButton) -> {
                     if(position < 0) {
-                        if (carName.getText().equals("") || registrationNumber.equals("")) {
-                            Toast.makeText(getApplicationContext(),
+                        if (TextUtils.isEmpty(carName.getText()) || TextUtils.isEmpty(registrationNumber.getText()) ) {
+                            Toast.makeText(alert.getContext(),
                                     "Unesite ispravne podatke, polja ne smiju biti prazna!",
-                                    Toast.LENGTH_SHORT);
+                                    Toast.LENGTH_SHORT).show();
                         } else {
                             CarInfo carInfo = new CarInfo(carName.getText().toString(),
                                     registrationNumber.getText().toString());
@@ -177,10 +186,10 @@ public class CarsActivity extends AppCompatActivity {
                             dialog.dismiss();
                         }
                     } else {
-                        if (carName.getText().equals("") || registrationNumber.equals("")) {
-                            Toast.makeText(getApplicationContext(),
+                        if (TextUtils.isEmpty(carName.getText()) || TextUtils.isEmpty(registrationNumber.getText())) {
+                            Toast.makeText(alert.getContext(),
                                     "Unesite ispravne podatke, polja ne smiju biti prazna!",
-                                    Toast.LENGTH_SHORT);
+                                    Toast.LENGTH_SHORT).show();
                         } else {
                             cars.get((int)position).setName(carName.getText().toString());
                             cars.get((int)position).setName(registrationNumber.getText().toString());
@@ -190,10 +199,11 @@ public class CarsActivity extends AppCompatActivity {
                         }
                     }
                 });
-        alert.show();
+        alert.setCancelable(false);
+        alert.create().show();
     }
 
-    private void processPrekiniClick(DialogInterface alert) {
+    private void processCancelClick(AlertDialog.Builder alert, DialogInterface oldDialog) {
         DialogInterface.OnClickListener dialogClickListener =
                 (dialog, which) -> {
                     switch (which) {
@@ -201,7 +211,6 @@ public class CarsActivity extends AppCompatActivity {
                             break;
 
                         case DialogInterface.BUTTON_NEGATIVE:
-                            alert.dismiss();
                             break;
                     }
                 };
@@ -210,7 +219,7 @@ public class CarsActivity extends AppCompatActivity {
                 new AlertDialog.Builder(CarsActivity.this);
         builder.setMessage("Jeste li sigurni da želite prekinuti uređivanje?")
                 .setNegativeButton("Da", dialogClickListener)
-                .setPositiveButton("Ne", dialogClickListener)
-                .show();
+                .setPositiveButton("Ne", dialogClickListener);
+        builder.show();
     }
 }

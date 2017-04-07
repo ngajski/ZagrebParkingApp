@@ -13,6 +13,7 @@ import com.google.android.gms.location.LocationListener;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -48,9 +49,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
 
     private GoogleMap mMap;
-
     private LocationRequest mLocationRequest;
-    private  GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClient;
     private LatLng latLng;
     private Marker currLocationMarker;
 
@@ -59,8 +59,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private String currZone;
 
+    private ArrayList<String> cars;
+    private ArrayAdapter<String> dataAdapter;
     private Spinner registrationSpinner;
     private TextView zoneTextView;
+
     private TextView priceTextView;
     private Button payButton;
 
@@ -70,12 +73,15 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private List<Zone> zones;
 
+    public static final String registracija = "ZG6230DV";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
         registrationSpinner = (Spinner) findViewById(R.id.regSpinner);
+        cars = new ArrayList<>();
         zoneTextView = (TextView) findViewById(R.id.zoneEditText);
         priceTextView = (TextView) findViewById(R.id.priceEditText);
         payButton = (Button) findViewById(R.id.payButton);
@@ -93,6 +99,47 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         zones = new LinkedList<>(Zone.loadCoordinates(context.getAssets()));
 
+        payButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    generateSMS();
+                } catch (IOException e) {
+                    Toast.makeText(context, "Neuspjelo plaćanje, IOException", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+    }
+
+    public String generateSMS() throws IOException{
+        /**BufferedReader entry = null;
+
+        try{
+            entry = new BufferedReader(new InputStreamReader(context.getAssets().open("treca.txt")));
+        } catch(IOException ex){
+
+        }
+        String zone = entry.readLine().trim();
+        while(!zone.startsWith("currZone")){
+            zone = entry.readLine().trim();
+        }
+
+        String[] data = zone.split("\t");
+        String number = data[1];
+        String maxHour = data[2];
+        String message = null; //tu idu tablice auta
+
+         **/
+        try {
+            SmsManager sms = SmsManager.getDefault();
+            sms.sendTextMessage("700103", null, "ZG6230DV", null, null);
+        } catch(Exception ex){
+            Toast.makeText(context, "Neuspjelo plaćanje, IllegalArgument", Toast.LENGTH_LONG).show();
+        }
+        Toast.makeText(context, "Uspješno plaćanje", Toast.LENGTH_LONG).show();
+
+        return "SMS uspjesno poslan";
     }
 
     @Override
@@ -165,6 +212,22 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             mGoogleApiClient.disconnect();
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == RESULT_OK) {
+            List<String> list = data.getStringArrayListExtra("cars");
+
+            cars.clear();
+
+            for(String s : list) {
+                cars.add(s);
+            }
+            dataAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -277,13 +340,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
 
     private void addItemsToRegistrationSpinner() {
-        List<String> list = new ArrayList<String>();
-        list.add("Dodaj novi automobil...");
-        list.add("list 1");
-        list.add("list 2");
-        list.add("list 3");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list);
+        cars.add("Dodaj novi automobil...");
+        cars.add("list1");
+
+        dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, cars);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         registrationSpinner.setAdapter(dataAdapter);
         registrationSpinner.setSelection(1,true);
