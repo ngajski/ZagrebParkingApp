@@ -10,7 +10,7 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="279dp"
-        tools:context="hr.fer.zagrebparkingapp.MapActivity" />
+        tools:context="hr.fer.zagrebparkingapp.activities.MapActivity" />
 
     <TextView
         android:id="@+id/zoneEditText"

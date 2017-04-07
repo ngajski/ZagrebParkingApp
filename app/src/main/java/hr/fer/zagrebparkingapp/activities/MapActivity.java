@@ -1,16 +1,12 @@
-package hr.fer.zagrebparkingapp;
+package hr.fer.zagrebparkingapp.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.content.res.AssetManager;
-import android.hardware.Sensor;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import com.google.android.gms.location.LocationListener;
-import android.support.annotation.NonNull;
+
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -19,7 +15,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,13 +39,17 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import hr.fer.zagrebparkingapp.database.DBTestActivity;
+import hr.fer.zagrebparkingapp.R;
+import hr.fer.zagrebparkingapp.model.CarInfo;
+import hr.fer.zagrebparkingapp.model.Coordinate;
+import hr.fer.zagrebparkingapp.model.Garage;
+import hr.fer.zagrebparkingapp.model.Zone;
+
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
@@ -78,6 +77,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private Context context;
 
     private List<Zone> zones;
+
+    private List<Garage> garages;
 
     public static final String registracija = "ZG6230DV";
 
@@ -115,6 +116,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         registrationSpinner.setAdapter(dataAdapter);
 
         zones = new LinkedList<>(Zone.loadCoordinates(context.getAssets()));
+
+        garages = new LinkedList<>(Garage.loadCoordinates(context.getAssets()));
+
 
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,6 +243,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 //                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
         mGoogleApiClient.connect();
+
+        setGarageMarkers(mMap);
 
     }
 
@@ -505,4 +511,27 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         return false;
     }
 
+
+    private void setGarageMarkers(GoogleMap map) {
+        for(Garage g : garages) {
+            MarkerOptions mo = new MarkerOptions();
+            Coordinate c = g.getCoordinate();
+            LatLng ll = new LatLng(c.getLattitude(), c.getLongitude());
+            mo.position(ll);
+            mo.title("Garaža " + g.getName());
+            mo.snippet("Kapacitet: " + g.getCapacity() + " mjesta");
+            //mo.snippet(g.getCapacity());
+
+            Bitmap gm = BitmapFactory.decodeResource(getResources(), R.drawable.garage_marker);
+            gm = Bitmap.createScaledBitmap(gm, 70, 70, false);
+            mo.icon(BitmapDescriptorFactory.fromBitmap(gm));
+            map.addMarker(mo);
+//            CircleOptions co = new CircleOptions();
+//            co.center(ll);
+//            co.fillColor(Color.GREEN).radius(10);
+//            map.addCircle(co);
+            //map.addMarker(new MarkerOptions().position(new LatLng(c.getLattitude(), c.getLongitude())));
+        }
+        //map.setOnMarkerClickListener();
+    }
 }

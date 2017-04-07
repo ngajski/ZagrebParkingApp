@@ -1,4 +1,4 @@
-package hr.fer.zagrebparkingapp;
+package hr.fer.zagrebparkingapp.model;
 
 import android.content.res.AssetManager;
 import android.util.Log;
@@ -63,7 +63,7 @@ public class Zone {
             BufferedReader fileReader;
 
             for(String file : files) {
-                if(!file.endsWith(".txt")) continue;
+                if(!file.endsWith(".txt") || file.startsWith("garaze")) continue;
                 fileReader = new BufferedReader(new InputStreamReader(am.open(file)));
                 String zoneName = file.substring(0, file.indexOf('.'));
                 Zone z = new Zone(zoneName);

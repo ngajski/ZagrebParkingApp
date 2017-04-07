@@ -27,11 +27,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC71VcBjYcCjDXzCUK7MkhZ_FzN1BeHZfc" />
 
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".CarsActivity"
             android:icon="@drawable/icon_car"
@@ -43,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MapActivity"
+            android:name=".activities.MapActivity"
             android:icon="@drawable/icon_car"
             android:label="ZagrepParkingApp">
             <intent-filter>

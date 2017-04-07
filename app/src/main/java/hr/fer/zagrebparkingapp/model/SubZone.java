@@ -1,6 +1,8 @@
-package hr.fer.zagrebparkingapp;
+package hr.fer.zagrebparkingapp.model;
 
 import java.util.List;
+
+import hr.fer.zagrebparkingapp.model.Coordinate;
 
 /**
  * Created by Vilim on 24.3.2017..

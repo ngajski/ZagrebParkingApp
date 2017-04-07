@@ -1,4 +1,4 @@
-package hr.fer.zagrebparkingapp;
+package hr.fer.zagrebparkingapp.model;
 
 /**
  * Created by Vilim on 24.3.2017..
