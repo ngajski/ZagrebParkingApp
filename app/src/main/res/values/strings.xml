@@ -3,4 +3,5 @@
     <string name="title_activity_map">Map</string>
     <string name="Edit">Uredi</string>
     <string name="Delete">Izbriši</string>
+    <string name="title_activity_dbtest">DBTestActivity</string>
 </resources>

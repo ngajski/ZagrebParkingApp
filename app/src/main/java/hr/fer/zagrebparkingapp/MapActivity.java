@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import hr.fer.zagrebparkingapp.database.DBTestActivity;
+
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
 
@@ -368,7 +370,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     private Intent newIntent(){
-        return new Intent(this, CarsActivity.class);
+        return new Intent(this, DBTestActivity.class);
     }
 
 

@@ -1,6 +1,7 @@
 package hr.fer.zagrebparkingapp;
 
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -74,6 +75,8 @@ public class Zone {
                     List<String> data = Arrays.asList(line.split(" "));
                     if(data.size() != 1) {
                         String type = data.get(0);
+                        Log.d("exception", file);
+                        System.out.print(data);
                         Double lat = Double.parseDouble(data.get(1));
                         Double lon = Double.parseDouble(data.get(2));
                         Coordinate c = new Coordinate(lat, lon);
