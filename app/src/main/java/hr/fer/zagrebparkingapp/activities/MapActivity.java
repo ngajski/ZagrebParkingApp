@@ -80,8 +80,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private List<Garage> garages;
 
-    public static final String registracija = "ZG6230DV";
-
     FirebaseDatabase database;
     DatabaseReference carsRef;
 
@@ -112,6 +110,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         dataAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, android.R.id.text1);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dataAdapter.add("Dodaj novi automobil...");
 
         registrationSpinner.setAdapter(dataAdapter);
 
@@ -123,11 +122,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    generateSMS();
-                } catch (IOException e) {
-                    Toast.makeText(context, "Neuspjelo plaćanje, IOException", Toast.LENGTH_LONG).show();
-                }
             }
         });
         carsRef.addValueEventListener(new ValueEventListener() {
@@ -187,8 +181,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         }
     }
 
-    public String generateSMS() throws IOException{
-        /**BufferedReader entry = null;
+    /**public String generateSMS() throws IOException{
+        BufferedReader entry = null;
 
         try{
             entry = new BufferedReader(new InputStreamReader(context.getAssets().open("treca.txt")));
@@ -205,7 +199,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         String maxHour = data[2];
         String message = null; //tu idu tablice auta
 
-         **/
+
         try {
             SmsManager sms = SmsManager.getDefault();
             sms.sendTextMessage("700103", null, "ZG6230DV", null, null);
@@ -216,6 +210,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         return "SMS uspjesno poslan";
     }
+     **/
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
