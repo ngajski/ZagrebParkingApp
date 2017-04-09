@@ -1,12 +1,15 @@
 package hr.fer.zagrebparkingapp.activities;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import com.google.android.gms.location.LocationListener;
 
+import android.provider.Telephony;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -41,6 +44,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,6 +64,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private LatLng latLng;
     private Marker currLocationMarker;
 
+    private String time;
+    private String currentTime;
+
     private double currLat;
     private double currLong;
 
@@ -71,6 +78,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private TextView priceTextView;
     private Button payButton;
+    private Button readButton;
 
     private boolean isStartup = true;
 
@@ -95,6 +103,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         zoneTextView = (TextView) findViewById(R.id.zoneEditText);
         priceTextView = (TextView) findViewById(R.id.priceEditText);
         payButton = (Button) findViewById(R.id.payButton);
+        readButton = (Button) findViewById(R.id.readButton);
 
         context = this.getApplicationContext();
 
@@ -118,12 +127,34 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         garages = new LinkedList<>(Garage.loadCoordinates(context.getAssets()));
 
+        Calendar calendar = Calendar.getInstance();
+
+        currentTime = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE);
 
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    generateSMS();
+                } catch (IOException e) {
+                    Toast.makeText(context, "Neuspjelo plaćanje, IOException", Toast.LENGTH_LONG).show();
+                }
             }
         });
+
+
+
+        readButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    readSms(context);
+                } catch (Exception e) {
+                    Toast.makeText(context, "Neuspjelo čitanje, IOException", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         carsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -181,25 +212,25 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         }
     }
 
-    /**public String generateSMS() throws IOException{
-        BufferedReader entry = null;
+    public String generateSMS() throws IOException{
+        /**BufferedReader entry = null;
 
-        try{
-            entry = new BufferedReader(new InputStreamReader(context.getAssets().open("treca.txt")));
-        } catch(IOException ex){
+         try{
+         entry = new BufferedReader(new InputStreamReader(context.getAssets().open("treca.txt")));
+         } catch(IOException ex){
 
-        }
-        String zone = entry.readLine().trim();
-        while(!zone.startsWith("currZone")){
-            zone = entry.readLine().trim();
-        }
+         }
+         String zone = entry.readLine().trim();
+         while(!zone.startsWith("currZone")){
+         zone = entry.readLine().trim();
+         }
 
-        String[] data = zone.split("\t");
-        String number = data[1];
-        String maxHour = data[2];
-        String message = null; //tu idu tablice auta
+         String[] data = zone.split("\t");
+         String number = data[1];
+         String maxHour = data[2];
+         String message = null; //tu idu tablice auta
 
-
+         **/
         try {
             SmsManager sms = SmsManager.getDefault();
             sms.sendTextMessage("700103", null, "ZG6230DV", null, null);
@@ -210,7 +241,32 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         return "SMS uspjesno poslan";
     }
-     **/
+
+    public void readSms(Context context) {
+
+        ContentResolver cr = context.getContentResolver();
+        Cursor c = cr.query(Telephony.Sms.CONTENT_URI, null, null, null, null);
+        int totalSMS = 0;
+        if (c != null) {
+            totalSMS = c.getCount();
+            if (c.moveToFirst()) {
+                for (int j = 0; j < totalSMS; j++) {
+                    String number = c.getString(c.getColumnIndexOrThrow(Telephony.Sms.ADDRESS));
+                    if(number.equals("700103")){
+                        String body = c.getString(c.getColumnIndexOrThrow(Telephony.Sms.BODY));
+                        time = body.substring(body.indexOf(':')-2, body.indexOf(':')+3);
+                        Toast.makeText(this, time, Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                    c.moveToNext();
+                }
+            }
+        } else {
+            Toast.makeText(this, "No message to show!", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {

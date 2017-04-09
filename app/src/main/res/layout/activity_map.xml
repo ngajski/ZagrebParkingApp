@@ -46,6 +46,14 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="Plati" />
+        <Button
+            android:id="@+id/readButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/payButton"
+            android:layout_marginEnd="48dp"
+            android:text="Citaj" />
     </RelativeLayout>
 
 
