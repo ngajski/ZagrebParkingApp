@@ -30,7 +30,8 @@
         <activity
             android:name=".CarsActivity"
             android:icon="@drawable/icon_car"
-            android:label="ZagrepParkingApp">
+            android:label="ZagrepParkingApp"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="hr.fer.zagrebparkingapp.CarsActivity" />
 
@@ -40,7 +41,8 @@
         <activity
             android:name=".activities.MapActivity"
             android:icon="@drawable/icon_car"
-            android:label="ZagrepParkingApp">
+            android:label="ZagrepParkingApp"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="hr.fer.zagrebparkingapp.activities.MapActivity" />
 
@@ -55,7 +57,8 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/. 
         -->
-        <activity android:name=".activities.SignInActivity">
+        <activity android:name=".activities.SignInActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

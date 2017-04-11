@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -94,10 +95,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_map);
 
         database = FirebaseDatabase.getInstance();
-        carsRef = database.getReference("cars");
+        carsRef = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
 
         zoneTextView = (TextView) findViewById(R.id.zoneEditText);

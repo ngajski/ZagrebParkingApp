@@ -1,5 +1,6 @@
 <LinearLayout xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -30,19 +31,23 @@
         android:text="Cijena (1 sat):"
         android:textSize="25dp"/>
 
-    <Spinner
-        android:id="@+id/regSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="50dp" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:weightSum="1">
 
-        <Button
-            android:id="@+id/payButton"
+        <Spinner
+            android:id="@+id/regSpinner"
+            android:layout_width="148dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.85" />
+
+        <Space
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="Plati" />
@@ -54,7 +59,28 @@
             android:layout_alignTop="@+id/payButton"
             android:layout_marginEnd="48dp"
             android:text="Citaj" />
-    </RelativeLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatAddNewCar"
+            android:layout_width="81dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_done" />
+
+     </LinearLayout>
 
 
-</LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:id="@+id/payButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Plati"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
+    </LinearLayout>
+

@@ -140,6 +140,7 @@ public class SignInActivity extends AppCompatActivity implements
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             startActivity(new Intent("hr.fer.zagrebparkingapp.activities.MapActivity"));
+                            finish();
                         }
                         // ...
                     }

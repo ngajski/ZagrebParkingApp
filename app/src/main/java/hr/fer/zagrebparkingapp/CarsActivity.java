@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,7 +51,8 @@ public class CarsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cars);
 
         database = FirebaseDatabase.getInstance();
-        carsRef = database.getReference("cars");
+        carsRef = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setLogo(R.drawable.icon_car);
