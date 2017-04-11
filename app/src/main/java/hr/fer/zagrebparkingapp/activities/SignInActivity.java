@@ -1,13 +1,10 @@
 package hr.fer.zagrebparkingapp.activities;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -49,6 +46,8 @@ public class SignInActivity extends AppCompatActivity implements
 
         mAuth = FirebaseAuth.getInstance();
 
+        setContentView(R.layout.login_layout);
+
         // ...
         mAuthListener = firebaseAuth -> {
             FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -72,6 +71,11 @@ public class SignInActivity extends AppCompatActivity implements
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+
+        signInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        signInButton.setSize(SignInButton.SIZE_STANDARD);
+
+        signInButton.setOnClickListener(SignInActivity.this);
 
     }
 
@@ -123,18 +127,14 @@ public class SignInActivity extends AppCompatActivity implements
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+                    public void onComplete(Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            setContentView(R.layout.login_layout);
-                            signInButton = (SignInButton) findViewById(R.id.sign_in_button);
-                            signInButton.setSize(SignInButton.SIZE_STANDARD);
 
-                            signInButton.setOnClickListener(SignInActivity.this);
                         } else {
                             startActivity(new Intent("hr.fer.zagrebparkingapp.activities.MapActivity"));
                             finish();
