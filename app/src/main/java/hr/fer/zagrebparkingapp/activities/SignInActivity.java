@@ -41,10 +41,11 @@ public class SignInActivity extends AppCompatActivity implements
 
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    private SignInButton signInButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_layout);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -71,12 +72,6 @@ public class SignInActivity extends AppCompatActivity implements
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
-
-        SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-
-        signInButton.setOnClickListener(this);
 
     }
 
@@ -135,9 +130,11 @@ public class SignInActivity extends AppCompatActivity implements
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(SignInActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            setContentView(R.layout.login_layout);
+                            signInButton = (SignInButton) findViewById(R.id.sign_in_button);
+                            signInButton.setSize(SignInButton.SIZE_STANDARD);
+
+                            signInButton.setOnClickListener(SignInActivity.this);
                         } else {
                             startActivity(new Intent("hr.fer.zagrebparkingapp.activities.MapActivity"));
                             finish();

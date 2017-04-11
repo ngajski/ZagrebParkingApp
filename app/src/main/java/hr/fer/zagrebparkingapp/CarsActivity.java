@@ -193,7 +193,7 @@ public class CarsActivity extends AppCompatActivity {
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setIcon(R.drawable.icon_car).setTitle(title).setView(textEntryView)
                 .setPositiveButton("Prekini",  (dialog, whichButton) -> {
-                    processCancelClick(alert, dialog);
+                    dialog.dismiss();
                 }).setNegativeButton("Spremi", (dialog, whichButton) -> {
                     if(position < 0) {
                         if (TextUtils.isEmpty(carName.getText()) || TextUtils.isEmpty(registrationNumber.getText()) ) {
@@ -224,25 +224,5 @@ public class CarsActivity extends AppCompatActivity {
                 });
         alert.setCancelable(false);
         alert.create().show();
-    }
-
-    private void processCancelClick(AlertDialog.Builder alert, DialogInterface oldDialog) {
-        DialogInterface.OnClickListener dialogClickListener =
-                (dialog, which) -> {
-                    switch (which) {
-                        case DialogInterface.BUTTON_POSITIVE:
-                            break;
-
-                        case DialogInterface.BUTTON_NEGATIVE:
-                            break;
-                    }
-                };
-
-        AlertDialog.Builder builder =
-                new AlertDialog.Builder(CarsActivity.this);
-        builder.setMessage("Jeste li sigurni da želite prekinuti uređivanje?")
-                .setNegativeButton("Da", dialogClickListener)
-                .setPositiveButton("Ne", dialogClickListener);
-        builder.show();
     }
 }

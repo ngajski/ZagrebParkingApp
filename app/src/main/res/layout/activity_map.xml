@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/ic_background">
 
 
     <fragment
@@ -18,23 +19,34 @@
         android:id="@+id/zoneEditText"
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:textSize="20dp"/>
+        android:textColor="@android:color/background_light"
+        android:textSize="22sp" />
 
     <TextView
         android:id="@+id/priceEditText"
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Cijena (1 sat):"
-        android:textSize="25dp"/>
+        android:textAlignment="textStart"
+        android:textColor="@android:color/background_light"
+        android:textSize="22sp" />
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_marginLeft="10dp"
         android:orientation="horizontal"
         android:weightSum="1">
 
@@ -42,7 +54,10 @@
             android:id="@+id/regSpinner"
             android:layout_width="148dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.85" />
+            android:layout_marginTop="15dp"
+            android:layout_weight="0.96"
+            android:background="@android:color/background_light"
+            android:popupBackground="?attr/colorButtonNormal" />
 
         <Space
             android:layout_width="wrap_content"
@@ -51,24 +66,19 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="Plati" />
-        <Button
-            android:id="@+id/readButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/payButton"
-            android:layout_marginEnd="48dp"
-            android:text="Citaj" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/floatAddNewCar"
-            android:layout_width="81dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_done" />
+            android:layout_marginLeft="15dp"
+            android:layout_weight="0.06"
+            android:src="@drawable/icon_car"
+            map:backgroundTint="@android:color/holo_red_light"
+            map:fabSize="normal" />
 
-     </LinearLayout>
+    </LinearLayout>
 
 
         <RelativeLayout
@@ -79,8 +89,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Plati"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="11dp" />
         </RelativeLayout>
     </LinearLayout>
 

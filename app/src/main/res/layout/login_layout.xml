@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="hr.fer.zagrebparkingapp.activities.SignInActivity">
+    tools:context="hr.fer.zagrebparkingapp.activities.SignInActivity"
+    android:background="@drawable/ic_background">
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
@@ -27,6 +28,7 @@
         android:fontFamily="monospace"
         android:text="Ulogirajte se svojim Google korisničkim računom"
         android:textAlignment="center"
+        android:textColor="@color/common_google_signin_btn_text_dark_pressed"
         android:textSize="24sp"
         android:textStyle="bold" />
 

@@ -10,6 +10,7 @@ import android.location.Location;
 import com.google.android.gms.location.LocationListener;
 
 import android.provider.Telephony;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -92,13 +93,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     FirebaseDatabase database;
     DatabaseReference carsRef;
 
+    private List<String> carInfos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.activity_map);
 
+        carInfos = new ArrayList<>();
         database = FirebaseDatabase.getInstance();
         carsRef = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -106,7 +108,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         zoneTextView = (TextView) findViewById(R.id.zoneEditText);
         priceTextView = (TextView) findViewById(R.id.priceEditText);
         payButton = (Button) findViewById(R.id.payButton);
-        readButton = (Button) findViewById(R.id.readButton);
 
         context = this.getApplicationContext();
 
@@ -120,9 +121,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         registrationSpinner = (Spinner) findViewById(R.id.regSpinner);
         dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, android.R.id.text1);
+                R.layout.spinner_item, carInfos);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dataAdapter.add("Dodaj novi automobil...");
 
         registrationSpinner.setAdapter(dataAdapter);
 
@@ -130,39 +130,35 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         garages = new LinkedList<>(Garage.loadCoordinates(context.getAssets()));
 
+        FloatingActionButton floatingActionButton = (FloatingActionButton)findViewById(R.id.floatAddNewCar);
+        floatingActionButton.setImageResource(R.drawable.icon_car);
+        floatingActionButton.setOnClickListener(view -> {
+            Intent i = newIntent();
+            startActivity(i);
+        });
+
         Calendar calendar = Calendar.getInstance();
 
         currentTime = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE);
 
-        payButton.setOnClickListener(new View.OnClickListener() {
+        /**payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    generateSMS();
+                    //generateSMS();
                 } catch (IOException e) {
                     Toast.makeText(context, "Neuspjelo plaćanje, IOException", Toast.LENGTH_LONG).show();
                 }
             }
         });
+         */
 
 
-
-        readButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    readSms(context);
-                } catch (Exception e) {
-                    Toast.makeText(context, "Neuspjelo čitanje, IOException", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
 
         carsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 dataAdapter.clear();
-                dataAdapter.add("Dodaj novi automobil...");
 
                 List<CarInfo> cars = new ArrayList<>();
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
@@ -170,14 +166,15 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 }
 
                 if(cars == null) {
+                    carInfos.add("Trenutno nemate odabran auto ->");
+                    dataAdapter.notifyDataSetChanged();
                     return;
                 }
 
                 for(CarInfo info : cars) {
-                    dataAdapter.add(info.getName() + ":" + info.getRegistrationNumber());
+                    carInfos.add(info.getName() + ":" + info.getRegistrationNumber());
                 }
                 dataAdapter.notifyDataSetChanged();
-                registrationSpinner.setSelection(1, true);
             }
 
             @Override
@@ -190,7 +187,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 final Intent i;
-                if (position == 0) {
+                if (dataAdapter.getCount() == 0) {
                     i = newIntent();
                     startActivity(i);
                 }
@@ -204,19 +201,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == RESULT_OK) {
-            if (dataAdapter.getCount() == 1) {
-                registrationSpinner.setSelected(false);
-            } else {
-                registrationSpinner.setSelection(1, true);
-            }
-        }
-    }
-
-    public String generateSMS() throws IOException{
-        /**BufferedReader entry = null;
+  /**  public String generateSMS() throws IOException{
+        BufferedReader entry = null;
 
          try{
          entry = new BufferedReader(new InputStreamReader(context.getAssets().open("treca.txt")));
@@ -233,7 +219,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
          String maxHour = data[2];
          String message = null; //tu idu tablice auta
 
-         **/
+
         try {
             SmsManager sms = SmsManager.getDefault();
             sms.sendTextMessage("700103", null, "ZG6230DV", null, null);
@@ -243,7 +229,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         Toast.makeText(context, "Uspješno plaćanje", Toast.LENGTH_LONG).show();
 
         return "SMS uspjesno poslan";
-    }
+    }**/
 
     public void readSms(Context context) {
 
@@ -447,7 +433,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         if(found) {
             zoneTextView.setText(currZone);
         } else {
-            zoneTextView.setText("Trenutno se ne nalazite ni u jednoj zoni");
+            zoneTextView.setText("Trenutno nemate odabranu zonu");
         }
 
     }
