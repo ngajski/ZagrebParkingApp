@@ -63,7 +63,7 @@ public class SignInActivity extends AppCompatActivity implements
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("313941281799-sd37hbk9ivi7lpn49pvct1r5doi9cucd.apps.googleusercontent.com")
+                .requestIdToken(String.valueOf(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
@@ -71,6 +71,8 @@ public class SignInActivity extends AppCompatActivity implements
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+
+        mGoogleApiClient.connect();
 
         signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
@@ -108,6 +110,7 @@ public class SignInActivity extends AppCompatActivity implements
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("onActivityResult", "Google account is about to fail...");
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -115,6 +118,11 @@ public class SignInActivity extends AppCompatActivity implements
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             }
+            else {
+                Log.d("Fail", "Google account failed to connect...");
+            }
+        } else {
+            Log.d("Fail", "Google account failed to connect...");
         }
     }
 
@@ -147,6 +155,7 @@ public class SignInActivity extends AppCompatActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
+                Log.d("Signing in", "About to sign in...");
                 signIn();
                 break;
         }
@@ -154,6 +163,7 @@ public class SignInActivity extends AppCompatActivity implements
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        Log.d("Creating intent", "About to sign in...");
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 

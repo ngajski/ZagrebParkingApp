@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "313941281799",
-    "firebase_url": "https://zagrebparkingapp.firebaseio.com",
-    "project_id": "zagrebparkingapp",
-    "storage_bucket": "zagrebparkingapp.appspot.com"
+    "project_number": "879117145405",
+    "firebase_url": "https://zagrebparkingapp-5e890.firebaseio.com",
+    "project_id": "zagrebparkingapp-5e890",
+    "storage_bucket": "zagrebparkingapp-5e890.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:313941281799:android:4f1471fab28e6ca2",
+        "mobilesdk_app_id": "1:879117145405:android:4f1471fab28e6ca2",
         "android_client_info": {
           "package_name": "hr.fer.zagrebparkingapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "313941281799-648jiul7nqc4uuoqv2eeaa5n5jrqm3b8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "hr.fer.zagrebparkingapp",
-            "certificate_hash": "2e31a968650cf8ce992ec3c7cc118c76cb0a6849"
-          }
-        },
-        {
-          "client_id": "313941281799-g4n9q99fuee9c7jvu3h0aii5doum05tj.apps.googleusercontent.com",
+          "client_id": "879117145405-ene3douau0ulf46l7lu799v8tir2fu8f.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCprSNmOh8GOD6K9lH_5OH7lk7jsO8eesk"
+          "current_key": "AIzaSyCB-mCHETzwsaKt9Pwtmge011UaFpZBkho"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "313941281799-g4n9q99fuee9c7jvu3h0aii5doum05tj.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2
