@@ -63,7 +63,7 @@ public class SignInActivity extends AppCompatActivity implements
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("313941281799-g4n9q99fuee9c7jvu3h0aii5doum05tj.apps.googleusercontent.com")
+                .requestIdToken("313941281799-sd37hbk9ivi7lpn49pvct1r5doi9cucd.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
@@ -108,12 +108,10 @@ public class SignInActivity extends AppCompatActivity implements
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
-                // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             }
