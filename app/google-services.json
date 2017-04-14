@@ -1,27 +1,35 @@
 {
   "project_info": {
-    "project_number": "879117145405",
-    "firebase_url": "https://zagrebparkingapp-5e890.firebaseio.com",
-    "project_id": "zagrebparkingapp-5e890",
-    "storage_bucket": "zagrebparkingapp-5e890.appspot.com"
+    "project_number": "958776212834",
+    "firebase_url": "https://zagrebparkingapp-5b06c.firebaseio.com",
+    "project_id": "zagrebparkingapp-5b06c",
+    "storage_bucket": "zagrebparkingapp-5b06c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:879117145405:android:4f1471fab28e6ca2",
+        "mobilesdk_app_id": "1:958776212834:android:4f1471fab28e6ca2",
         "android_client_info": {
           "package_name": "hr.fer.zagrebparkingapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "879117145405-ene3douau0ulf46l7lu799v8tir2fu8f.apps.googleusercontent.com",
+          "client_id": "958776212834-p0utrk0s5om73c0e6g3do3ragd4fdm2a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hr.fer.zagrebparkingapp",
+            "certificate_hash": "2e31a968650cf8ce992ec3c7cc118c76cb0a6849"
+          }
+        },
+        {
+          "client_id": "958776212834-j0bp7i4mp3ide56u1t3iumloq2vbq4if.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCB-mCHETzwsaKt9Pwtmge011UaFpZBkho"
+          "current_key": "AIzaSyCfSbCQuudsssCMIu5j9Rt3Xw2kDbWd0OI"
         }
       ],
       "services": {
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "958776212834-j0bp7i4mp3ide56u1t3iumloq2vbq4if.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

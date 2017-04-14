@@ -1,10 +1,15 @@
 package hr.fer.zagrebparkingapp.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -26,7 +31,7 @@ import hr.fer.zagrebparkingapp.R;
 
 public class SignInActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener {
+        View.OnClickListener, GoogleApiClient.ConnectionCallbacks {
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -40,6 +45,9 @@ public class SignInActivity extends AppCompatActivity implements
 
     private SignInButton signInButton;
 
+    private static final int REQUEST_PERMISSIONS = 0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,8 +60,7 @@ public class SignInActivity extends AppCompatActivity implements
         mAuthListener = firebaseAuth -> {
             FirebaseUser user = firebaseAuth.getCurrentUser();
             if (user != null) {
-                // User is signed in
-                Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                startActivity(new Intent("hr.fer.zagrebparkingapp.activities.MapActivity"));
             } else {
                 // User is signed out
                 Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -63,12 +70,13 @@ public class SignInActivity extends AppCompatActivity implements
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(String.valueOf(R.string.default_web_client_id))
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
@@ -119,7 +127,7 @@ public class SignInActivity extends AppCompatActivity implements
                 firebaseAuthWithGoogle(account);
             }
             else {
-                Log.d("Fail", "Google account failed to connect...");
+                Log.d("Fail", "Google account failed to connect..." + "Web client id: " + getString(R.string.default_web_client_id));
             }
         } else {
             Log.d("Fail", "Google account failed to connect...");
@@ -145,19 +153,56 @@ public class SignInActivity extends AppCompatActivity implements
                             startActivity(new Intent("hr.fer.zagrebparkingapp.activities.MapActivity"));
                             finish();
                         }
+
                         // ...
                     }
                 });
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSIONS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length == 3
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[2] == PackageManager.PERMISSION_GRANTED) {
+                    signIn();
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "You cannot run the application because" +
+                            " you didn't grant the permissions for its purposes...", Toast.LENGTH_LONG);
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+
             case R.id.sign_in_button:
-                Log.d("Signing in", "About to sign in...");
-                signIn();
-                break;
+                if (ActivityCompat.checkSelfPermission(SignInActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(SignInActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(SignInActivity.this,
+                                Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED ) {
+
+                    ActivityCompat.requestPermissions(SignInActivity.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.SEND_SMS, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            REQUEST_PERMISSIONS);
+                } else {
+                    Log.d("Signing in", "About to sign in...");
+                    signIn();
+                    break;
+                }
         }
     }
 
@@ -175,6 +220,18 @@ public class SignInActivity extends AppCompatActivity implements
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+
 }
 
 
