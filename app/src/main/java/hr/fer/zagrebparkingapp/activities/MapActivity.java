@@ -58,6 +58,7 @@ import hr.fer.zagrebparkingapp.R;
 import hr.fer.zagrebparkingapp.model.CarInfo;
 import hr.fer.zagrebparkingapp.model.Coordinate;
 import hr.fer.zagrebparkingapp.model.Garage;
+import hr.fer.zagrebparkingapp.model.Payment;
 import hr.fer.zagrebparkingapp.model.Zone;
 
 
@@ -611,6 +612,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 dialog.dismiss();
             })
             .setPositiveButton("DA", (dialog, whichButton) -> {
+                Coordinate coordinate = new Coordinate(currLat, currLong);
+                CarInfo car = (CarInfo) registrationSpinner.getSelectedItem();
+                String zone = zoneSpinner.getSelectedItem().toString();
+                //Calendar
+                //Payment payment = new Payment()
 //                try {
 //                    generateSMS();
 //                    dialog.dismiss();
