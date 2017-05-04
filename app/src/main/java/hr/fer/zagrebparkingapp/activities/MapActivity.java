@@ -1,5 +1,6 @@
 package hr.fer.zagrebparkingapp.activities;
 
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,11 +15,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -141,17 +145,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         currentTime = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE);
 
-        /**payButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    //generateSMS();
-                } catch (IOException e) {
-                    Toast.makeText(context, "Neuspjelo plaćanje, IOException", Toast.LENGTH_LONG).show();
-                }
-            }
+//        payButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                try {
+//                    //generateSMS();
+//                } catch (IOException e) {
+//                    Toast.makeText(context, "Neuspjelo plaćanje, IOException", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+        payButton.setOnClickListener(view -> {
+            alertDialog("Provjera podataka");
         });
-         */
+
 
 
 
@@ -574,4 +581,55 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         }
         //map.setOnMarkerClickListener();
     }
+
+    private void alertDialog(String title) {
+        LayoutInflater factory = LayoutInflater.from(this);
+
+        final View textEntryView = factory.inflate(R.layout.payment_check, null);
+
+        Spinner zoneSpinner = (Spinner) textEntryView.findViewById(R.id.zoneSpinner);
+        TextView currentCar = (TextView) textEntryView.findViewById(R.id.currentCar);
+        TextView numOfHours = (TextView) textEntryView.findViewById(R.id.numOfHours);
+        TextView priceSum = (TextView) textEntryView.findViewById(R.id.priceSum);
+
+        List<String> zoneNames = getZoneNamesList();
+        ArrayAdapter<String> dataAdapter;
+        dataAdapter = new ArrayAdapter<String>(this,
+                R.layout.spinner_item, zoneNames);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        zoneSpinner.setAdapter(dataAdapter);
+
+        currentCar.setText(registrationSpinner.getSelectedItem().toString());
+
+        numOfHours.setText("novo"); /////////
+        priceSum.setText("novo"); /////////
+
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setIcon(R.drawable.icon_car)
+            .setTitle(title)
+            .setView(textEntryView)
+            .setNegativeButton("NE",  (dialog, whichButton) -> {
+                dialog.dismiss();
+            })
+            .setPositiveButton("DA", (dialog, whichButton) -> {
+//                try {
+//                    generateSMS();
+//                    dialog.dismiss();
+//                } catch (IOException e) {
+//                    Toast.makeText(context, "Neuspjelo plaćanje, IOException", Toast.LENGTH_LONG).show();
+//                }
+            }
+        );
+        alert.setCancelable(false);
+        alert.create().show();
+    }
+
+    private List<String> getZoneNamesList() {
+        List<String> names = new LinkedList<>();
+        for(Zone z : zones) {
+            names.add(z.getName());
+        }
+        return names;
+    }
+
 }
