@@ -15,6 +15,9 @@ public class Payment {
     private double numOfHours;
     private double price;
 
+    public Payment() {
+    }
+
     public Payment(Coordinate coordinate, CarInfo car, String zone, Calendar paymentTime, double numOfHours, double price) {
         this.coordinate = coordinate;
         this.car = car;

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -17,10 +16,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -31,59 +28,58 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import hr.fer.zagrebparkingapp.R;
 import hr.fer.zagrebparkingapp.activities.TabActivity;
-import hr.fer.zagrebparkingapp.model.CarInfo;
+import hr.fer.zagrebparkingapp.model.Payment;
 
 import static android.app.Activity.RESULT_OK;
 
-public class CarsFragment extends Fragment {
+/**
+ * Created by nikol on 5/4/2017.
+ */
 
-    private List<CarInfo> cars;
+public class HistoryFragment extends Fragment {
+
+    private List<Payment> payments;
     private ListView mListView;
-    private ArrayAdapter<CarInfo> arrayAdapter;
+    private ArrayAdapter<Payment> arrayAdapter;
 
-    private Button mButtonDodaj;
-    private Button mButtonZavrsi;
+    private Button btnHome;
 
     private FirebaseDatabase database;
-    private DatabaseReference carsRef;
+    private DatabaseReference paymentsRef;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View carView = inflater.inflate(R.layout.fragment_cars,container,false);
+        View historyView = inflater.inflate(R.layout.fragment_history,container,false);
 
         database = FirebaseDatabase.getInstance();
-        carsRef = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("cars");
+        paymentsRef = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("payments");
 
         ActionBar actionBar = ((TabActivity)getActivity()).getSupportActionBar();
         actionBar.setLogo(R.drawable.icon_car);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
-        cars = new ArrayList<>();
+        payments = new ArrayList<>();
 
         arrayAdapter = initializeAdapter();
 
-        mListView = (ListView) carView.findViewById(R.id.listView);
+        mListView = (ListView) historyView.findViewById(R.id.listHistory);
         mListView.setAdapter(arrayAdapter);
         registerForContextMenu(mListView);
         mListView.setOnItemClickListener((adapterView, view, i, l) -> openContextMenu(view));
+        mListView.setOnItemClickListener((myView,view,j,l) -> openContextMenu(view));
 
-
-        mButtonDodaj = (Button) carView.findViewById(R.id.dodaj);
-        mButtonDodaj.setOnClickListener(view -> {
-            alertDialog("Dodavanje novog automobila", -1);
-        });
-
-        carsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        paymentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                cars.clear();
+                payments.clear();
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
-                    cars.add(child.getValue(CarInfo.class));
+                    payments.add(child.getValue(Payment.class));
                 }
                 arrayAdapter.notifyDataSetChanged();
             }
@@ -94,20 +90,20 @@ public class CarsFragment extends Fragment {
             }
         });
 
-        mButtonZavrsi = (Button) carView.findViewById(R.id.zavrsi);
-        mButtonZavrsi.setOnClickListener(v -> {
-            carsRef.setValue(cars);
+        btnHome = (Button) historyView.findViewById(R.id.btnHistoryPovratak);
+        btnHome.setOnClickListener(v -> {
+            paymentsRef.setValue(payments);
             Intent intent = new Intent();
             ((TabActivity)getActivity()).setResult(RESULT_OK, intent);
             ((TabActivity)getActivity()).finish();
         });
 
-        return carView;
+        return historyView;
     }
 
 
-    private ArrayAdapter<CarInfo> initializeAdapter() {
-        return new ArrayAdapter<CarInfo>(getActivity(), R.layout.textview_for_listview, R.id.textViewListView1, cars) {
+    private ArrayAdapter<Payment> initializeAdapter() {
+        return new ArrayAdapter<Payment>(getActivity(), R.layout.textview_for_listview, R.id.textViewListView1, payments) {
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -116,13 +112,14 @@ public class CarsFragment extends Fragment {
                 TextView text1 = (TextView) view.findViewById(R.id.textViewListView1);
                 TextView text2 = (TextView) view.findViewById(R.id.textViewListView2);
 
-                CarInfo carInfo = cars.get(position);
+                Payment payment = payments.get(position);
 
-                if (carInfo.getName() != null && !carInfo.getName().isEmpty()) {
-                    text1.setText(carInfo.getName());
+                if (payment.getCar() != null ) {
+                    text1.setText(payment.getCar().getName());
                 }
-                if(carInfo.getRegistrationNumber() != null && !carInfo.getRegistrationNumber().isEmpty()) {
-                    text2.setText(carInfo.getRegistrationNumber());
+
+                if (payment.getZone() != null) {
+                    text2.setText(payment.getZone() + " " + payment.getPrice());
                 }
 
                 return view;
@@ -133,7 +130,7 @@ public class CarsFragment extends Fragment {
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        if (v.getId() == R.id.listView) {
+        if (v.getId() == R.id.listHistory) {
             MenuInflater inflater = getActivity().getMenuInflater();
             inflater.inflate(R.menu.menu_list, menu);
         }
@@ -144,7 +141,7 @@ public class CarsFragment extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.edit:
-                editAction(info);
+                /*editAction(info);*/
                 return true;
 
             case R.id.delete:
@@ -164,7 +161,7 @@ public class CarsFragment extends Fragment {
 
                 case DialogInterface.BUTTON_NEGATIVE:
                     int index = info.position;
-                    cars.remove(index);
+                    payments.remove(index);
                     arrayAdapter.notifyDataSetChanged();
                     break;
             }
@@ -177,9 +174,9 @@ public class CarsFragment extends Fragment {
                 .show();
     }
 
-    private void editAction(AdapterView.AdapterContextMenuInfo info) {
+    /*private void editAction(AdapterView.AdapterContextMenuInfo info) {
         alertDialog("Uređivanje postojećeg automobila", info.position);
-    }
+    }*/
 
     /**
      * Programmatically opens the context menu for a particular {@code view}.
@@ -192,52 +189,4 @@ public class CarsFragment extends Fragment {
         view.showContextMenu();
     }
 
-    private void alertDialog(String title, long position) {
-        LayoutInflater factory = LayoutInflater.from(getActivity());
-
-        final View textEntryView = factory.inflate(R.layout.text_entry, null);
-
-        EditText carName = (EditText) textEntryView.findViewById(R.id.ime_auta);
-        EditText registrationNumber = (EditText) textEntryView.findViewById(R.id.registracija);
-
-        if(position >= 0) {
-            carName.setText(cars.get((int)position).getName());
-            registrationNumber.setText(cars.get((int)position).getRegistrationNumber());
-        }
-
-        final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-        alert.setIcon(R.drawable.icon_car).setTitle(title).setView(textEntryView)
-                .setPositiveButton("Prekini",  (dialog, whichButton) -> {
-                    dialog.dismiss();
-                }).setNegativeButton("Spremi", (dialog, whichButton) -> {
-            if(position < 0) {
-                if (TextUtils.isEmpty(carName.getText()) || TextUtils.isEmpty(registrationNumber.getText()) ) {
-                    Toast.makeText(alert.getContext(),
-                            "Unesite ispravne podatke, polja ne smiju biti prazna!",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    CarInfo carInfo = new CarInfo(carName.getText().toString(),
-                            registrationNumber.getText().toString());
-                    cars.add(carInfo);
-
-                    arrayAdapter.notifyDataSetChanged();
-                    dialog.dismiss();
-                }
-            } else {
-                if (TextUtils.isEmpty(carName.getText()) || TextUtils.isEmpty(registrationNumber.getText())) {
-                    Toast.makeText(alert.getContext(),
-                            "Unesite ispravne podatke, polja ne smiju biti prazna!",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    cars.get((int)position).setName(carName.getText().toString());
-                    cars.get((int)position).setName(registrationNumber.getText().toString());
-
-                    arrayAdapter.notifyDataSetChanged();
-                    dialog.dismiss();
-                }
-            }
-        });
-        alert.setCancelable(false);
-        alert.create().show();
-    }
 }

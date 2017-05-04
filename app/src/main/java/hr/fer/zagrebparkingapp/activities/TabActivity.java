@@ -9,6 +9,7 @@ import android.os.Bundle;
 import hr.fer.zagrebparkingapp.R;
 import hr.fer.zagrebparkingapp.adapter.SectionPageAdapter;
 import hr.fer.zagrebparkingapp.fragments.CarsFragment;
+import hr.fer.zagrebparkingapp.fragments.HistoryFragment;
 
 public class TabActivity extends AppCompatActivity {
 
@@ -31,7 +32,9 @@ public class TabActivity extends AppCompatActivity {
 
     private void setupViewPage(ViewPager viewPager) {
         SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new CarsFragment(),"TAB1");
+
+        adapter.addFragment(new CarsFragment(),"Vozila");
+        adapter.addFragment(new HistoryFragment(),"Plaćanja");
 
         viewPager.setAdapter(adapter);
     }
