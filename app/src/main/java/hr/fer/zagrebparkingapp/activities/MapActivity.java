@@ -96,7 +96,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     private List<Garage> garages;
 
     FirebaseDatabase database;
+    DatabaseReference ref;
     DatabaseReference carsRef;
+    DatabaseReference paymentsRef;
+
+    private List<Payment> payments;
 
     private List<String> carInfos;
 
@@ -106,9 +110,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         setContentView(R.layout.activity_map);
 
         carInfos = new ArrayList<>();
+        payments = new LinkedList<>();
         database = FirebaseDatabase.getInstance();
-        carsRef = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
+        ref = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        carsRef = ref.child("cars");
+        paymentsRef = ref.child("payments");
 
         zoneTextView = (TextView) findViewById(R.id.zoneEditText);
         priceTextView = (TextView) findViewById(R.id.priceEditText);
@@ -615,8 +621,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 Coordinate coordinate = new Coordinate(currLat, currLong);
                 CarInfo car = (CarInfo) registrationSpinner.getSelectedItem();
                 String zone = zoneSpinner.getSelectedItem().toString();
-                //Calendar
-                //Payment payment = new Payment()
+                Calendar paymentTime = Calendar.getInstance();
+                double hours = 1;
+                double price = 5;
+                Payment payment = new Payment(coordinate, car, zone, paymentTime, hours, price);
+
 //                try {
 //                    generateSMS();
 //                    dialog.dismiss();
