@@ -101,15 +101,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     DatabaseReference paymentsRef;
 
     private List<Payment> payments;
-
     private List<String> carInfos;
-
     private List<Marker> carMarkers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_main2);
 
         carInfos = new ArrayList<>();
         payments = new ArrayList<>();
@@ -155,22 +153,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         currentTime = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE);
 
-//        payButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                try {
-//                    //generateSMS();
-//                } catch (IOException e) {
-//                    Toast.makeText(context, "Neuspjelo plaćanje, IOException", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//        });
         payButton.setOnClickListener(view -> {
             alertDialog("Provjera podataka");
         });
-
-
-
 
         carsRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -189,7 +174,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 }
 
                 for(CarInfo info : cars) {
-                    carInfos.add(info.getName() + ":" + info.getRegistrationNumber());
+                    //carInfos.add(info.getName() + ":" + info.getRegistrationNumber());
+                    carInfos.add(info.getName());
                 }
                 dataAdapter.notifyDataSetChanged();
             }
@@ -234,36 +220,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         });
 
     }
-
-  /**  public String generateSMS() throws IOException{
-        BufferedReader entry = null;
-
-         try{
-         entry = new BufferedReader(new InputStreamReader(context.getAssets().open("treca.txt")));
-         } catch(IOException ex){
-
-         }
-         String zone = entry.readLine().trim();
-         while(!zone.startsWith("currZone")){
-         zone = entry.readLine().trim();
-         }
-
-         String[] data = zone.split("\t");
-         String number = data[1];
-         String maxHour = data[2];
-         String message = null; //tu idu tablice auta
-
-
-        try {
-            SmsManager sms = SmsManager.getDefault();
-            sms.sendTextMessage("700103", null, "ZG6230DV", null, null);
-        } catch(Exception ex){
-            Toast.makeText(context, "Neuspjelo plaćanje, IllegalArgument", Toast.LENGTH_LONG).show();
-        }
-        Toast.makeText(context, "Uspješno plaćanje", Toast.LENGTH_LONG).show();
-
-        return "SMS uspjesno poslan";
-    }**/
 
     public void readSms(Context context) {
 
@@ -320,7 +276,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         setGarageMarkers();
         setParkingMarkers();
-
     }
 
 
@@ -334,13 +289,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 .build();
     }
 
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        //Now lets connect to the API
-//        mGoogleApiClient.connect();
-//    }
     @Override
     protected void onResume() {
       super.onResume();
@@ -368,25 +316,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     @Override
     public void onConnected(Bundle bundle) throws SecurityException{
-//        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//
-//        if (location == null) {
-//            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-//
-//        } else {
-//            //If everything went fine lets get latitude and longitude
-//            currentLatitude = location.getLatitude();
-//            currentLongitude = location.getLongitude();
-//
-//            Toast.makeText(this, currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
-//        }
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
     }
 
     @Override
@@ -394,31 +329,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-//            /*
-//             * Google Play services can resolve some errors it detects.
-//             * If the error has a resolution, try sending an Intent to
-//             * start a Google Play services activity that can resolve
-//             * error.
-//             */
-//        if (connectionResult.hasResolution()) {
-//            try {
-//                // Start an Activity that tries to resolve the error
-//                connectionResult.startResolutionForResult(this, 9000);
-//                    /*
-//                     * Thrown if Google Play services canceled the original
-//                     * PendingIntent
-//                     */
-//            } catch (IntentSender.SendIntentException e) {
-//                // Log the error
-//                e.printStackTrace();
-//            }
-//        } else {
-//                /*
-//                 * If no resolution is available, display a dialog to the
-//                 * user with the error.
-//                 */
-//            Log.e("Error", "Location services connection failed with code " + connectionResult.getErrorCode());
-//        }
     }
 
     /**
@@ -429,29 +339,15 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
      */
     @Override
     public void onLocationChanged(Location location) {
-//        currentLatitude = location.getLatitude();
-//        currentLongitude = location.getLongitude();
-//
-//        Toast.makeText(this, currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
-       // mLastLocation = location;
 
-        //remove previous current location Marker
-//        if (currLocationMarker != null){
-//            currLocationMarker.remove();
-//        }
 
         currLat = location.getLatitude();
         currLong = location.getLongitude();
-//        currLocationMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(currLat, currLong))
-//                .title("My Location").icon(BitmapDescriptorFactory
-//                        .defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+
         if(isStartup) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLong),15));
             isStartup = false;
         }
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLat, currLong),15));
-
-//        zoneTextView.setText("Koordinate: (" + currLat + " , " + currLong + ")");
 
         Coordinate c = new Coordinate(currLat, currLong);
 
@@ -464,7 +360,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
         }
 
-        //currZone = provjeri(currLat, currLong);
         if(found) {
             zoneTextView.setText(currZone);
         } else {
@@ -483,10 +378,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             try {
                 if(i == 0){
                     BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("treca.txt")));
-//                    AssetManager am = getAssets();
-//                    InputStream is = am.open("treca.txt");
-//                   // byte[] buffer = Arrays.;
-                    //is.read(buffer);
+
                     boolean nasao = unutra(latitude, longitude, ulaz);
                     if(nasao){
                         return "treca";
@@ -540,8 +432,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         String line = null;
         boolean pao = false;
         int linija = 0;
-//        do{
-//                line = ulaz.readLine().trim();
 
         while((line=ulaz.readLine())!=null){
             line=line.trim();
@@ -594,19 +484,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             mo.position(ll);
             mo.title("Garaža " + g.getName());
             mo.snippet("Kapacitet: " + g.getCapacity() + " mjesta");
-            //mo.snippet(g.getCapacity());
 
             Bitmap gm = BitmapFactory.decodeResource(getResources(), R.drawable.garage_marker);
             gm = Bitmap.createScaledBitmap(gm, 70, 70, false);
             mo.icon(BitmapDescriptorFactory.fromBitmap(gm));
             mMap.addMarker(mo);
-//            CircleOptions co = new CircleOptions();
-//            co.center(ll);
-//            co.fillColor(Color.GREEN).radius(10);
-//            map.addCircle(co);
-            //map.addMarker(new MarkerOptions().position(new LatLng(c.getLattitude(), c.getLongitude())));
         }
-        //map.setOnMarkerClickListener();
     }
 
     private void setParkingMarkers() {
@@ -617,7 +500,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             mo.position(ll);
             mo.title("Automobil " + p.getCar());
             mo.snippet("Vrijeme parkiranja: " + p.getPaymentTime());
-            //mo.snippet(g.getCapacity());
 
             Bitmap gm = BitmapFactory.decodeResource(getResources(), R.drawable.car_marker);
             gm = Bitmap.createScaledBitmap(gm, 70, 70, false);
@@ -673,12 +555,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 Payment payment = new Payment(coordinate, car, zone, time, hours, price);
                 payments.add(payment);
                 paymentsRef.setValue(payments);
-//                try {
-//                    generateSMS();
-//                    dialog.dismiss();
-//                } catch (IOException e) {
-//                    Toast.makeText(context, "Neuspjelo plaćanje, IOException", Toast.LENGTH_LONG).show();
-//                }
             }
         );
         alert.setCancelable(false);
