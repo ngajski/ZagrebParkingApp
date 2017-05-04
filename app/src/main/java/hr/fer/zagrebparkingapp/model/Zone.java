@@ -63,9 +63,10 @@ public class Zone {
             BufferedReader fileReader;
 
             for(String file : files) {
-                if(!file.endsWith(".txt") || file.startsWith("garaze")) continue;
+                if(!file.endsWith(".txt") || file.startsWith("garaze") || file.startsWith("paromlin")) continue;
                 fileReader = new BufferedReader(new InputStreamReader(am.open(file)));
                 String zoneName = file.substring(0, file.indexOf('.'));
+                zoneName = getDisplayName(zoneName);
                 Zone z = new Zone(zoneName);
                 String line;
                 List<Coordinate> coordinates = new LinkedList<>();
@@ -103,6 +104,31 @@ public class Zone {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static String getDisplayName(String oldName) {
+        String name = "";
+        switch (oldName) {
+            case "prva" :
+                name = "I. zona";
+                break;
+            case "jedan_jedan" :
+                name = "I.1. zona";
+                break;
+            case "druga" :
+                name = "II. zona";
+                break;
+            case "treca" :
+                name = "III. zona";
+                break;
+            case "cetiri_jedan" :
+                name = "IV.1. zona";
+                break;
+            case "cetiri_dva" :
+                name = "IV.2. zona";
+                break;
+        }
+        return name;
     }
 
 }
