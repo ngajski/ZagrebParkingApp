@@ -170,6 +170,7 @@ public class SignInActivity extends AppCompatActivity implements
                         grantResults[1] == PackageManager.PERMISSION_GRANTED &&
                         grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                     signIn();
+                    Toast.makeText(getApplicationContext(), "Signing in...", Toast.LENGTH_SHORT);
 
                 } else {
                     Toast.makeText(getApplicationContext(), "You cannot run the application because" +
