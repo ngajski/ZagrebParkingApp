@@ -10,7 +10,7 @@ import hr.fer.zagrebparkingapp.R;
 import hr.fer.zagrebparkingapp.adapter.SectionPageAdapter;
 import hr.fer.zagrebparkingapp.fragments.CarsFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class TabActivity extends AppCompatActivity {
 
     private SectionPageAdapter pageAdapter;
     private ViewPager mViewPager;

@@ -1,41 +1,27 @@
-package hr.fer.zagrebparkingapp.activities;
+package hr.fer.zagrebparkingapp.fragments;
 
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
+import android.text.TextUtils;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,22 +29,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.LinkedList;
 import java.util.List;
 import hr.fer.zagrebparkingapp.R;
+import hr.fer.zagrebparkingapp.activities.TabActivity;
 import hr.fer.zagrebparkingapp.model.CarInfo;
-import hr.fer.zagrebparkingapp.model.Coordinate;
-import hr.fer.zagrebparkingapp.model.Garage;
-import hr.fer.zagrebparkingapp.model.Zone;
 
 import static android.app.Activity.RESULT_OK;
 
-public class MapFragment extends Fragment {
+public class CarsFragment extends Fragment {
 
     private List<CarInfo> cars;
     private ListView mListView;
@@ -76,16 +55,10 @@ public class MapFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View carView = inflater.inflate(R.layout.activity_cars,container,false);
 
-
-/*
-        setContentView(R.layout.activity_cars);
-*/
-
         database = FirebaseDatabase.getInstance();
         carsRef = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-
-        ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
+        ActionBar actionBar = ((TabActivity)getActivity()).getSupportActionBar();
         actionBar.setLogo(R.drawable.icon_car);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -101,9 +74,9 @@ public class MapFragment extends Fragment {
 
 
         mButtonDodaj = (Button) carView.findViewById(R.id.dodaj);
-        /*mButtonDodaj.setOnClickListener(view -> {
+        mButtonDodaj.setOnClickListener(view -> {
             alertDialog("Dodavanje novog automobila", -1);
-        });*/
+        });
 
         carsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -125,8 +98,8 @@ public class MapFragment extends Fragment {
         mButtonZavrsi.setOnClickListener(v -> {
             carsRef.setValue(cars);
             Intent intent = new Intent();
-            ((MainActivity)getActivity()).setResult(RESULT_OK, intent);
-            ((MainActivity)getActivity()).finish();
+            ((TabActivity)getActivity()).setResult(RESULT_OK, intent);
+            ((TabActivity)getActivity()).finish();
         });
 
         return carView;
@@ -157,6 +130,56 @@ public class MapFragment extends Fragment {
         };
     }
 
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (v.getId() == R.id.listView) {
+            MenuInflater inflater = getActivity().getMenuInflater();
+            inflater.inflate(R.menu.menu_list, menu);
+        }
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        switch (item.getItemId()) {
+            case R.id.edit:
+                editAction(info);
+                return true;
+
+            case R.id.delete:
+                deleteAction(info);
+                return true;
+
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    private void deleteAction(AdapterView.AdapterContextMenuInfo info) {
+        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    int index = info.position;
+                    cars.remove(index);
+                    arrayAdapter.notifyDataSetChanged();
+                    break;
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Jeste li sigurni da želite obrisati ovaj automobil?")
+                .setNegativeButton("Da", dialogClickListener)
+                .setPositiveButton("Ne", dialogClickListener)
+                .show();
+    }
+
+    private void editAction(AdapterView.AdapterContextMenuInfo info) {
+        alertDialog("Uređivanje postojećeg automobila", info.position);
+    }
 
     /**
      * Programmatically opens the context menu for a particular {@code view}.
@@ -169,4 +192,52 @@ public class MapFragment extends Fragment {
         view.showContextMenu();
     }
 
+    private void alertDialog(String title, long position) {
+        LayoutInflater factory = LayoutInflater.from(getActivity());
+
+        final View textEntryView = factory.inflate(R.layout.text_entry, null);
+
+        EditText carName = (EditText) textEntryView.findViewById(R.id.ime_auta);
+        EditText registrationNumber = (EditText) textEntryView.findViewById(R.id.registracija);
+
+        if(position >= 0) {
+            carName.setText(cars.get((int)position).getName());
+            registrationNumber.setText(cars.get((int)position).getRegistrationNumber());
+        }
+
+        final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setIcon(R.drawable.icon_car).setTitle(title).setView(textEntryView)
+                .setPositiveButton("Prekini",  (dialog, whichButton) -> {
+                    dialog.dismiss();
+                }).setNegativeButton("Spremi", (dialog, whichButton) -> {
+            if(position < 0) {
+                if (TextUtils.isEmpty(carName.getText()) || TextUtils.isEmpty(registrationNumber.getText()) ) {
+                    Toast.makeText(alert.getContext(),
+                            "Unesite ispravne podatke, polja ne smiju biti prazna!",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    CarInfo carInfo = new CarInfo(carName.getText().toString(),
+                            registrationNumber.getText().toString());
+                    cars.add(carInfo);
+
+                    arrayAdapter.notifyDataSetChanged();
+                    dialog.dismiss();
+                }
+            } else {
+                if (TextUtils.isEmpty(carName.getText()) || TextUtils.isEmpty(registrationNumber.getText())) {
+                    Toast.makeText(alert.getContext(),
+                            "Unesite ispravne podatke, polja ne smiju biti prazna!",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    cars.get((int)position).setName(carName.getText().toString());
+                    cars.get((int)position).setName(registrationNumber.getText().toString());
+
+                    arrayAdapter.notifyDataSetChanged();
+                    dialog.dismiss();
+                }
+            }
+        });
+        alert.setCancelable(false);
+        alert.create().show();
+    }
 }

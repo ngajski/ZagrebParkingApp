@@ -20,7 +20,7 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/icon_car"
-        android:label="ZagrepParkingApp"
+        android:label="ZagrebParkingApp"
         android:supportsRtl="true"
         android:theme="@style/ZagrebParkingApp">
         <meta-data
@@ -30,7 +30,7 @@
         <activity
             android:name=".CarsActivity"
             android:icon="@drawable/icon_car"
-            android:label="ZagrepParkingApp"
+            android:label="ZagrebParkingApp"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="hr.fer.zagrebparkingapp.CarsActivity" />
@@ -38,10 +38,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activities.MapActivity"
             android:icon="@drawable/icon_car"
-            android:label="ZagrepParkingApp"
+            android:label="ZagrebParkingApp"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="hr.fer.zagrebparkingapp.activities.MapActivity" />
@@ -49,6 +50,19 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activities.TabActivity"
+            android:icon="@drawable/icon_car"
+            android:label="ZagrebParkingApp"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="hr.fer.zagrebparkingapp.activities.TabActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -57,14 +71,16 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/. 
         -->
-        <activity android:name=".activities.SignInActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity
+        android:name=".activities.SignInActivity"
+        android:screenOrientation="portrait">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+
     </application>
 
 </manifest>

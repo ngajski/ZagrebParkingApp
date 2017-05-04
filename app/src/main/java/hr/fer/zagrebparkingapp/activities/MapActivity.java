@@ -446,8 +446,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     private Intent newIntent(){
-        return new Intent("hr.fer.zagrebparkingapp.CarsActivity");
-
+        return new Intent("hr.fer.zagrebparkingapp.activities.TabActivity");
     }
 
 

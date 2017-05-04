@@ -1,3 +1,5 @@
+/*
+
 package hr.fer.zagrebparkingapp;
 
 import android.app.AlertDialog;
@@ -177,7 +179,8 @@ public class CarsActivity extends AppCompatActivity {
         alertDialog("Uređivanje postojećeg automobila", info.position);
     }
 
-    private void alertDialog(String title, long position) {
+
+private void alertDialog(String title, long position) {
         LayoutInflater factory = LayoutInflater.from(this);
 
         final View textEntryView = factory.inflate(R.layout.text_entry, null);
@@ -225,4 +228,7 @@ public class CarsActivity extends AppCompatActivity {
         alert.setCancelable(false);
         alert.create().show();
     }
+
 }
+
+*/
