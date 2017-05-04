@@ -9,16 +9,16 @@ import java.util.Calendar;
 public class Payment {
 
     private Coordinate coordinate;
-    private CarInfo car;
+    private String car;
     private String zone;
-    private Calendar paymentTime;
+    private String paymentTime;
     private double numOfHours;
     private double price;
 
     public Payment() {
     }
 
-    public Payment(Coordinate coordinate, CarInfo car, String zone, Calendar paymentTime, double numOfHours, double price) {
+    public Payment(Coordinate coordinate, String car, String zone, String paymentTime, double numOfHours, double price) {
         this.coordinate = coordinate;
         this.car = car;
         this.zone = zone;
@@ -35,11 +35,11 @@ public class Payment {
         this.coordinate = coordinate;
     }
 
-    public CarInfo getCar() {
+    public String getCar() {
         return car;
     }
 
-    public void setCar(CarInfo car) {
+    public void setCar(String car) {
         this.car = car;
     }
 
@@ -51,11 +51,11 @@ public class Payment {
         this.zone = zone;
     }
 
-    public Calendar getPaymentTime() {
+    public String getPaymentTime() {
         return paymentTime;
     }
 
-    public void setPaymentTime(Calendar paymentTime) {
+    public void setPaymentTime(String paymentTime) {
         this.paymentTime = paymentTime;
     }
 

@@ -104,13 +104,15 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private List<String> carInfos;
 
+    private List<Marker> carMarkers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
         carInfos = new ArrayList<>();
-        payments = new LinkedList<>();
+        payments = new ArrayList<>();
         database = FirebaseDatabase.getInstance();
         ref = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid());
         carsRef = ref.child("cars");
@@ -122,6 +124,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         context = this.getApplicationContext();
 
+        carMarkers = new LinkedList<>();
 
         buildGoogleApiClient();
 
@@ -189,6 +192,23 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                     carInfos.add(info.getName() + ":" + info.getRegistrationNumber());
                 }
                 dataAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("Error", "Failed to read value.", databaseError.toException());
+            }
+        });
+
+        paymentsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                removeParkingMarkers();
+                payments.clear();
+                for(DataSnapshot child : dataSnapshot.getChildren()) {
+                    payments.add(child.getValue(Payment.class));
+                }
+                setParkingMarkers();
             }
 
             @Override
@@ -298,7 +318,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         mGoogleApiClient.connect();
 
-        setGarageMarkers(mMap);
+        setGarageMarkers();
+        setParkingMarkers();
 
     }
 
@@ -565,7 +586,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
 
-    private void setGarageMarkers(GoogleMap map) {
+    private void setGarageMarkers() {
         for(Garage g : garages) {
             MarkerOptions mo = new MarkerOptions();
             Coordinate c = g.getCoordinate();
@@ -578,7 +599,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             Bitmap gm = BitmapFactory.decodeResource(getResources(), R.drawable.garage_marker);
             gm = Bitmap.createScaledBitmap(gm, 70, 70, false);
             mo.icon(BitmapDescriptorFactory.fromBitmap(gm));
-            map.addMarker(mo);
+            mMap.addMarker(mo);
 //            CircleOptions co = new CircleOptions();
 //            co.center(ll);
 //            co.fillColor(Color.GREEN).radius(10);
@@ -586,6 +607,30 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             //map.addMarker(new MarkerOptions().position(new LatLng(c.getLattitude(), c.getLongitude())));
         }
         //map.setOnMarkerClickListener();
+    }
+
+    private void setParkingMarkers() {
+        for(Payment p : payments) {
+            MarkerOptions mo = new MarkerOptions();
+            Coordinate c = p.getCoordinate();
+            LatLng ll = new LatLng(c.getLattitude(), c.getLongitude());
+            mo.position(ll);
+            mo.title("Automobil " + p.getCar());
+            mo.snippet("Vrijeme parkiranja: " + p.getPaymentTime());
+            //mo.snippet(g.getCapacity());
+
+            Bitmap gm = BitmapFactory.decodeResource(getResources(), R.drawable.car_marker);
+            gm = Bitmap.createScaledBitmap(gm, 70, 70, false);
+            mo.icon(BitmapDescriptorFactory.fromBitmap(gm));
+            carMarkers.add(mMap.addMarker(mo));
+        }
+    }
+
+    private void removeParkingMarkers() {
+        for(Marker m : carMarkers) {
+            m.remove();
+        }
+        carMarkers.clear();
     }
 
     private void alertDialog(String title) {
@@ -619,13 +664,15 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             })
             .setPositiveButton("DA", (dialog, whichButton) -> {
                 Coordinate coordinate = new Coordinate(currLat, currLong);
-                CarInfo car = (CarInfo) registrationSpinner.getSelectedItem();
+                String car =  registrationSpinner.getSelectedItem().toString();
                 String zone = zoneSpinner.getSelectedItem().toString();
-                Calendar paymentTime = Calendar.getInstance();
+                //Calendar paymentTime = Calendar.getInstance();
+                String time = "sada";
                 double hours = 1;
                 double price = 5;
-                Payment payment = new Payment(coordinate, car, zone, paymentTime, hours, price);
-
+                Payment payment = new Payment(coordinate, car, zone, time, hours, price);
+                payments.add(payment);
+                paymentsRef.setValue(payments);
 //                try {
 //                    generateSMS();
 //                    dialog.dismiss();

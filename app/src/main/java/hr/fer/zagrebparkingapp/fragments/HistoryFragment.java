@@ -115,7 +115,7 @@ public class HistoryFragment extends Fragment {
                 Payment payment = payments.get(position);
 
                 if (payment.getCar() != null ) {
-                    text1.setText(payment.getCar().getName());
+                    text1.setText(payment.getCar());
                 }
 
                 if (payment.getZone() != null) {

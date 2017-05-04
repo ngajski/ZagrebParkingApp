@@ -9,6 +9,10 @@ public class Coordinate {
     private double lattitude;
     private double longitude;
 
+    public Coordinate() {
+
+    }
+
     public Coordinate(double lattitude, double longitude) {
         this.lattitude = lattitude;
         this.longitude = longitude;
