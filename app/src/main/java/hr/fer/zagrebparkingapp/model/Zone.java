@@ -63,7 +63,7 @@ public class Zone {
             BufferedReader fileReader;
 
             for(String file : files) {
-                if(!file.endsWith(".txt") || file.startsWith("garaze") || file.startsWith("paromlin")) continue;
+                if(!file.endsWith(".txt") || file.startsWith("garaze")) continue;
                 fileReader = new BufferedReader(new InputStreamReader(am.open(file)));
                 String zoneName = file.substring(0, file.indexOf('.'));
                 zoneName = getDisplayName(zoneName);
@@ -126,6 +126,9 @@ public class Zone {
                 break;
             case "cetiri_dva" :
                 name = "IV.2. zona";
+                break;
+            case "paromlin" :
+                name = "IV.2.(paromlin) zona";
                 break;
         }
         return name;
