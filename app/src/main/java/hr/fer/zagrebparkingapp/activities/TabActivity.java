@@ -15,6 +15,7 @@ public class TabActivity extends AppCompatActivity {
 
     private SectionPageAdapter pageAdapter;
     private ViewPager mViewPager;
+    private String priority;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +23,11 @@ public class TabActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         pageAdapter = new SectionPageAdapter(getSupportFragmentManager());
+
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            priority = extras.getString("priority");
+        }
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         setupViewPage(mViewPager);
@@ -33,9 +39,18 @@ public class TabActivity extends AppCompatActivity {
     private void setupViewPage(ViewPager viewPager) {
         SectionPageAdapter adapter = new SectionPageAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(new CarsFragment(),"Vozila");
-        adapter.addFragment(new HistoryFragment(),"Plaćanja");
-
+        if(priority != null) {
+            if (priority.equals("Cars")) {
+                adapter.addFragment(new CarsFragment(), "Vozila");
+                adapter.addFragment(new HistoryFragment(), "Plaćanja");
+            } else {
+                adapter.addFragment(new HistoryFragment(), "Plaćanja");
+                adapter.addFragment(new CarsFragment(), "Vozila");
+            }
+        } else {
+            adapter.addFragment(new CarsFragment(), "Vozila");
+            adapter.addFragment(new HistoryFragment(), "Plaćanja");
+        }
         viewPager.setAdapter(adapter);
     }
 

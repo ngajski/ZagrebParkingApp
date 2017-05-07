@@ -59,11 +59,6 @@ public class HistoryFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         paymentsRef = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("payments");
 
-        ActionBar actionBar = ((TabActivity)getActivity()).getSupportActionBar();
-        actionBar.setLogo(R.drawable.icon_car);
-        actionBar.setDisplayUseLogoEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
-
         payments = new ArrayList<>();
 
         arrayAdapter = initializeAdapter();

@@ -58,11 +58,6 @@ public class CarsFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         carsRef = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("cars");
 
-        ActionBar actionBar = ((TabActivity)getActivity()).getSupportActionBar();
-        actionBar.setLogo(R.drawable.icon_car);
-        actionBar.setDisplayUseLogoEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
-
         cars = new ArrayList<>();
 
         arrayAdapter = initializeAdapter();

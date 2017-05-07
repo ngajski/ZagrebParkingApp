@@ -8,7 +8,6 @@
     android:background="@drawable/ic_background"
     android:orientation="vertical"
     app:layout_constraintBottom_toBottomOf="parent"
-    tools:context="hr.fer.zagrebparkingapp.CarsActivity"
     tools:layout_editor_absoluteX="8dp">
 
 
@@ -37,15 +36,16 @@
             android:id="@+id/btnHistoryPovratak"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="15dp"
             android:layout_weight="0.19"
             android:text="Početna"
             android:textAllCaps="false"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:textStyle="bold" />
     </RelativeLayout>
 
 

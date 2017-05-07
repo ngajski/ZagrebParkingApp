@@ -26,18 +26,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC71VcBjYcCjDXzCUK7MkhZ_FzN1BeHZfc" />
-
-        <activity
-            android:name=".CarsActivity"
-            android:icon="@drawable/icon_car"
-            android:label="ZagrebParkingApp"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="hr.fer.zagrebparkingapp.CarsActivity" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".activities.MapActivity"
             android:icon="@drawable/icon_car"

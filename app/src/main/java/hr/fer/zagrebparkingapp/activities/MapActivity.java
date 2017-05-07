@@ -1,5 +1,6 @@
 package hr.fer.zagrebparkingapp.activities;
 
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -8,21 +9,33 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 
+import android.os.AsyncTask;
 import android.provider.Telephony;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentActivity;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.os.Bundle;
-import android.telephony.SmsManager;
-import android.text.TextUtils;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,11 +53,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
+import com.yalantis.contextmenu.lib.MenuObject;
+import com.yalantis.contextmenu.lib.MenuParams;
+import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -62,12 +80,14 @@ import hr.fer.zagrebparkingapp.model.Payment;
 import hr.fer.zagrebparkingapp.model.Zone;
 
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
-       GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback,
+       GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        LocationListener, NavigationView.OnNavigationItemSelectedListener, OnMenuItemClickListener{
 
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
-    private GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient authGoogleApiClient;
+    private GoogleApiClient locationGoogleApiClient;
     private LatLng latLng;
     private Marker currLocationMarker;
 
@@ -95,36 +115,74 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private List<Garage> garages;
 
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
     FirebaseDatabase database;
     DatabaseReference ref;
     DatabaseReference carsRef;
     DatabaseReference paymentsRef;
 
+    private String username;
+    private String useremail;
+
     private List<Payment> payments;
     private List<String> carInfos;
     private List<Marker> carMarkers;
 
+    private ContextMenuDialogFragment mMenuDialogFragment;
+
+    private TextView userName;
+    private TextView userEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        authGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this,this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        buildGoogleApiClient();
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        if(mFirebaseUser == null) {
+            startActivity(new Intent(this, SignInActivity.class));
+            finish();
+            return;
+        } else {
+            database = FirebaseDatabase.getInstance();
+            ref = database.getReference(mFirebaseUser.getUid());
+            carsRef = ref.child("cars");
+            paymentsRef = ref.child("payments");
+
+            username = mFirebaseUser.getDisplayName();
+            useremail = mFirebaseUser.getEmail();
+
+        }
+        setWindowTransitions();
+        setContentView(R.layout.activity_drawer);
+
+        context = this.getApplicationContext();
+
+        AsyncTaskRunner task = new AsyncTaskRunner();
+        task.execute();
 
         carInfos = new ArrayList<>();
         payments = new ArrayList<>();
         database = FirebaseDatabase.getInstance();
-        ref = database.getReference(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        carsRef = ref.child("cars");
-        paymentsRef = ref.child("payments");
 
         zoneTextView = (TextView) findViewById(R.id.zoneEditText);
         priceTextView = (TextView) findViewById(R.id.priceEditText);
         payButton = (Button) findViewById(R.id.payButton);
 
-        context = this.getApplicationContext();
-
         carMarkers = new LinkedList<>();
-
-        buildGoogleApiClient();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -138,17 +196,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
         registrationSpinner.setAdapter(dataAdapter);
 
-        zones = new LinkedList<>(Zone.loadCoordinates(context.getAssets()));
-
-        garages = new LinkedList<>(Garage.loadCoordinates(context.getAssets()));
-
-        FloatingActionButton floatingActionButton = (FloatingActionButton)findViewById(R.id.floatAddNewCar);
-        floatingActionButton.setImageResource(R.drawable.icon_car);
-        floatingActionButton.setOnClickListener(view -> {
-            Intent i = newIntent();
-            startActivity(i);
-        });
-
         Calendar calendar = Calendar.getInstance();
 
         currentTime = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE);
@@ -156,6 +203,25 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         payButton.setOnClickListener(view -> {
             alertDialog("Provjera podataka");
         });
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setCoolMenu();
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_name);
+        userEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email);
+
+        userName.setText(username);
+        userEmail.setText(useremail);
 
         carsRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -218,7 +284,27 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
             }
         });
+    }
 
+    private void buildGoogleApiClient() {
+        locationGoogleApiClient = new GoogleApiClient.Builder(this)
+                // The next two lines tell the new client that “this” current class will handle connection stuff
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                //fourth line adds the LocationServices API endpoint from GooglePlayServices
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+
+    private void setWindowTransitions() {
+        Explode ex = new Explode();
+        ex.setDuration(1000);
+        getWindow().setEnterTransition(ex);
+
+        Slide slide = new Slide();
+        slide.setDuration(1000);
+        getWindow().setExitTransition(slide);
     }
 
     public void readSms(Context context) {
@@ -248,14 +334,88 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
     @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if(id == R.id.carsItem) {
+            Intent intent = new Intent("hr.fer.zagrebparkingapp.activities.TabActivity");
+            intent.putExtra("priority", "Cars");
+            startActivity(intent);
+            return true;
+        }
+
+        if(id == R.id.paymentsItem) {
+            Intent intent = new Intent("hr.fer.zagrebparkingapp.activities.TabActivity");
+            intent.putExtra("priority", "Payments");
+            startActivity(intent);
+            return true;
+        }
+
+        if (id == R.id.logout) {
+            mFirebaseAuth.signOut();
+            Auth.GoogleSignInApi.signOut(authGoogleApiClient);
+            username = "ANONYMOUS";
+            startActivity(new Intent(this, SignInActivity.class), ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            return true;
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void setCoolMenu() {
+        MenuObject close = new MenuObject("Logout");
+        close.setResource(R.drawable.ic_logout);
+
+        MenuObject addCar = new MenuObject("Add car");
+        addCar.setResource(R.drawable.icon_car);
+
+        MenuObject payments = new MenuObject("Payments");
+        payments.setResource(R.drawable.ic_payment);
+
+        List<MenuObject> menuObjects = new ArrayList<>();
+        menuObjects.add(close);
+        menuObjects.add(addCar);
+        menuObjects.add(payments);
+
+        MenuParams menuParams = new MenuParams();
+        menuParams.setActionBarSize(220);
+        menuParams.setMenuObjects(menuObjects);
+        menuParams.setClosableOutside(true);
+        // set other settings to meet your needs
+        mMenuDialogFragment = ContextMenuDialogFragment.newInstance(menuParams);
+        mMenuDialogFragment.setItemClickListener((OnMenuItemClickListener) this);
+    }
+
+    @Override
+    public void onMenuItemClick(View clickedView, int position) {
+
+    }
+
+    private class AsyncTaskRunner extends AsyncTask<Object, Object, Void> {
+
+        @Override
+        protected Void doInBackground(Object... strings) {
+            zones = new LinkedList<>(Zone.loadCoordinates(context.getAssets()));
+            garages = new LinkedList<>(Garage.loadCoordinates(context.getAssets()));
+            return null;
+        }
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-//        LatLng zagreb = new LatLng(45.814360, 15.977357);
-//        mMap.addMarker(new MarkerOptions().position(zagreb).title("Zagreb"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(zagreb,15));
-
 
         try {
 
@@ -265,38 +425,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
         }
 
-
-
-//        mLocationRequest = LocationRequest.create()
-//                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-//                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
-//                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
-
-        mGoogleApiClient.connect();
-
+        locationGoogleApiClient.connect();
+        while(garages == null);
         setGarageMarkers();
         setParkingMarkers();
     }
 
 
-    private void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                // The next two lines tell the new client that “this” current class will handle connection stuff
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                //fourth line adds the LocationServices API endpoint from GooglePlayServices
-                .addApi(LocationServices.API)
-                .build();
-    }
-
     @Override
     protected void onResume() {
       super.onResume();
 
-       if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()){
-
+       if (locationGoogleApiClient == null || !locationGoogleApiClient.isConnected()){
             buildGoogleApiClient();
-            mGoogleApiClient.connect();
+            locationGoogleApiClient.connect();
 
         }
     }
@@ -307,9 +449,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         Log.v(this.getClass().getSimpleName(), "onPause()");
 
         //Disconnect from API onPause()
-        if (mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
+        if (locationGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(locationGoogleApiClient, this);
+            locationGoogleApiClient.disconnect();
         }
 
     }
@@ -321,7 +463,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        LocationServices.FusedLocationApi.requestLocationUpdates(locationGoogleApiClient, mLocationRequest, this);
+
     }
 
     @Override
