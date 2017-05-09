@@ -17,10 +17,13 @@ import java.util.List;
 public class Zone {
 
     private String name;
+    private String price;
+
     private List<SubZone> subZones;
 
-    public Zone(String name) {
+    public Zone(String name,String price) {
         this.name = name;
+        this.price = price;
         subZones = new LinkedList<>();
     }
 
@@ -56,7 +59,7 @@ public class Zone {
         return isIn;
     }
 
-    public static List<Zone> loadCoordinates(AssetManager am) {
+    public static List<Zone>  loadCoordinates(AssetManager am) {
         try {
             List<Zone> zones = new LinkedList<>();
             List<String> files = Arrays.asList(am.list(""));
@@ -66,8 +69,11 @@ public class Zone {
                 if(!file.endsWith(".txt") || file.startsWith("garaze")) continue;
                 fileReader = new BufferedReader(new InputStreamReader(am.open(file)));
                 String zoneName = file.substring(0, file.indexOf('.'));
+
+                String zonePrice = getZonePrice(zoneName);
                 zoneName = getDisplayName(zoneName);
-                Zone z = new Zone(zoneName);
+
+                Zone z = new Zone(zoneName,zonePrice);
                 String line;
                 List<Coordinate> coordinates = new LinkedList<>();
                 boolean isFirstLine = true;
@@ -134,4 +140,37 @@ public class Zone {
         return name;
     }
 
+    private static String getZonePrice(String oldName) {
+        String price = "";
+
+        switch (oldName) {
+            case "prva" :
+                price = "6 kn/h";
+                break;
+            case "jedan_jedan" :
+                price = " - ";
+                break;
+            case "druga" :
+                price = "3 kn/h";
+                break;
+            case "treca" :
+                price = "1,5 kn/h";
+                break;
+            case "cetiri_jedan" :
+                price = "5 kn/dan";
+                break;
+            case "cetiri_dva" :
+                price = "10 kn/dan";
+                break;
+            case "paromlin" :
+                price = "10 kn/dan";
+                break;
+        }
+
+        return price;
+    }
+
+    public String getPrice() {
+        return price;
+    }
 }

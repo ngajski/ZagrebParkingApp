@@ -98,6 +98,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private double currLong;
 
     private String currZone;
+    private String currentPrice;
 
     private ArrayAdapter<String> dataAdapter;
     private Spinner registrationSpinner;
@@ -498,6 +499,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         for(Zone z: zones) {
             if(z.isCoordinateInZone(c)) {
                 currZone = z.getName();
+                currentPrice = z.getPrice();
                 found = true;
                 break;
             }
@@ -505,8 +507,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if(found) {
             zoneTextView.setText(currZone);
+            priceTextView.setText(currentPrice);
+            payButton.setEnabled(true);
         } else {
-            zoneTextView.setText("Trenutno nemate odabranu zonu");
+            zoneTextView.setText("Ovdje se parkiranje ne naplaćuje");
+            priceTextView.setText("");
+            payButton.setEnabled(false);
         }
 
     }
@@ -514,110 +520,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Intent newIntent(){
         return new Intent("hr.fer.zagrebparkingapp.activities.TabActivity");
     }
-
-
-    public String provjeri (double latitude, double longitude){
-        for(int i = 0; i < 7; i++){//7 zona
-            try {
-                if(i == 0){
-                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("treca.txt")));
-
-                    boolean nasao = unutra(latitude, longitude, ulaz);
-                    if(nasao){
-                        return "treca";
-                    }
-                } else if(i == 1){
-                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("cetiri_jedan.txt")));
-                    boolean nasao = unutra(latitude, longitude, ulaz);
-                    if(nasao){
-                        return "cetiri_jedan";
-                    }
-                } else if(i == 2){
-                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("cetiri_dva.txt")));
-                    boolean nasao = unutra(latitude, longitude, ulaz);
-                    if(nasao){
-                        return "cetiri_dva";
-                    }
-                } else if(i == 3){
-                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("paromlin.txt")));
-                    boolean nasao = unutra(latitude, longitude, ulaz);
-                    if(nasao){
-                        return "paromlin";
-                    }
-                } else if(i == 4){
-                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("prva.txt")));
-                    boolean nasao = unutra(latitude, longitude, ulaz);
-                    if(nasao){
-                        return "prva";
-                    }
-                } else if(i == 5){
-                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("jedan_jedan.txt")));
-                    boolean nasao = unutra(latitude, longitude, ulaz);
-                    if(nasao){
-                        return "jedan_jedan";
-                    }
-                } else if(i == 6) {
-                    BufferedReader ulaz = new BufferedReader(new InputStreamReader(context.getAssets().open("druga.txt")));
-                    boolean nasao = unutra(latitude, longitude, ulaz);
-                    if (nasao) {
-                        return "druga";
-                    }
-                }
-            } catch(IOException ex){
-
-            }
-
-        }
-        return null;
-    }
-
-    public static boolean unutra(double latitude, double longitude, BufferedReader ulaz) throws IOException{
-        String line = null;
-        boolean pao = false;
-        int linija = 0;
-
-        while((line=ulaz.readLine())!=null){
-            line=line.trim();
-            String[] podaci = line.split(" ");
-            if(podaci.length == 1){
-                linija = 0;
-                pao = false;
-            }
-            if(!(podaci.length == 1)){
-                linija++;
-                double lat = Double.parseDouble(podaci[1]);
-                double lon = Double.parseDouble(podaci[2]);
-                if((latitude > lat || longitude < lon) && linija == 1){
-                    pao = true;
-                    line = ulaz.readLine();
-                    line = ulaz.readLine();
-                    line = ulaz.readLine();
-                    continue;
-                } else if((latitude > lat || longitude > lon) && linija == 2){
-                    pao = true;
-                    line = ulaz.readLine();
-                    line = ulaz.readLine();
-                    continue;
-                } else if((latitude < lat || longitude < lon) && linija == 3){
-                    pao = true;
-                    line = ulaz.readLine();
-                    continue;
-                } else if((latitude < lat || longitude > lon) && linija == 4){
-                    pao = true;
-                    continue;
-                } else {
-                    if(linija == 4 && !pao)
-                        return true;
-                }
-            }
-        }
-
-
-//        } while(!line.equals("kraj"));
-
-        return false;
-    }
-
 
     private void setGarageMarkers() {
         for(Garage g : garages) {
