@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,8 +44,8 @@ public class CarsFragment extends Fragment {
     private ListView mListView;
     private ArrayAdapter<CarInfo> arrayAdapter;
 
-    private Button mButtonDodaj;
-    private Button mButtonZavrsi;
+    private ImageButton mButtonDodaj;
+    private ImageButton mButtonZavrsi;
 
     private FirebaseDatabase database;
     private DatabaseReference carsRef;
@@ -64,11 +65,11 @@ public class CarsFragment extends Fragment {
 
         mListView = (ListView) carView.findViewById(R.id.listView);
         mListView.setAdapter(arrayAdapter);
-        registerForContextMenu(mListView);
-        mListView.setOnItemClickListener((adapterView, view, i, l) -> openContextMenu(view));
+//        registerForContextMenu(mListView);
+//        mListView.setOnItemClickListener((adapterView, view, i, l) -> openContextMenu(view));
 
 
-        mButtonDodaj = (Button) carView.findViewById(R.id.dodaj);
+        mButtonDodaj = (ImageButton) carView.findViewById(R.id.dodaj);
         mButtonDodaj.setOnClickListener(view -> {
             alertDialog("Dodavanje novog automobila", -1);
         });
@@ -89,7 +90,7 @@ public class CarsFragment extends Fragment {
             }
         });
 
-        mButtonZavrsi = (Button) carView.findViewById(R.id.zavrsi);
+        mButtonZavrsi = (ImageButton) carView.findViewById(R.id.zavrsi);
         mButtonZavrsi.setOnClickListener(v -> {
             carsRef.setValue(cars);
             Intent intent = new Intent();
@@ -102,23 +103,51 @@ public class CarsFragment extends Fragment {
 
 
     private ArrayAdapter<CarInfo> initializeAdapter() {
-        return new ArrayAdapter<CarInfo>(getActivity(), R.layout.textview_for_listview, R.id.textViewListView1, cars) {
+        return new ArrayAdapter<CarInfo>(getActivity(), R.layout.list_row, R.id.title, cars) {
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
 
-                TextView text1 = (TextView) view.findViewById(R.id.textViewListView1);
-                TextView text2 = (TextView) view.findViewById(R.id.textViewListView2);
+                TextView title = (TextView) view.findViewById(R.id.title);
+                TextView detail = (TextView) view.findViewById(R.id.detail);
+
+                ImageButton edit = (ImageButton) view.findViewById(R.id.editCar);
+                ImageButton delete = (ImageButton) view.findViewById(R.id.deleteCar);
 
                 CarInfo carInfo = cars.get(position);
 
                 if (carInfo.getName() != null && !carInfo.getName().isEmpty()) {
-                    text1.setText(carInfo.getName());
+                    title.setText(carInfo.getName());
                 }
                 if(carInfo.getRegistrationNumber() != null && !carInfo.getRegistrationNumber().isEmpty()) {
-                    text2.setText(carInfo.getRegistrationNumber());
+                    detail.setText(carInfo.getRegistrationNumber());
                 }
+
+                edit.setOnClickListener(viewX -> {
+                    alertDialog("Uređivanje postojećeg automobila", position);
+                });
+
+                delete.setOnClickListener(viewX -> {
+                    DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                int index = position;
+                                cars.remove(index);
+                                arrayAdapter.notifyDataSetChanged();
+                                break;
+                        }
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("Jeste li sigurni da želite obrisati ovaj automobil?")
+                            .setNegativeButton("Da", dialogClickListener)
+                            .setPositiveButton("Ne", dialogClickListener)
+                            .show();
+                });
 
                 return view;
             }

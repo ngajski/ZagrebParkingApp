@@ -5,11 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_background"
+
     android:orientation="vertical"
     app:layout_constraintBottom_toBottomOf="parent"
     tools:layout_editor_absoluteX="8dp">
 
+    <!--android:background="@drawable/ic_background"-->
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -21,46 +22,50 @@
             android:id="@+id/listView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:divider="#000000"
             android:dividerHeight="2px" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="15dp"
-        android:orientation="horizontal"
-        android:weightSum="1">
+        android:orientation="horizontal">
 
-        <Button
+        <Space
+            android:id="@+id/spaceCenter"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"/>
+
+        <ImageButton
             android:id="@+id/dodaj"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentTop="false"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="15dp"
-            android:layout_weight="0.46"
-            android:text="Dodaj automobil"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_toLeftOf="@id/spaceCenter"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:cropToPadding="false"
+            android:src="@drawable/plus_icon"
+            android:background="@null"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/zavrsi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentTop="false"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="15dp"
-            android:layout_weight="0.19"
-            android:text="Završi uređivanje"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_toRightOf="@id/spaceCenter"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:cropToPadding="false"
+            android:src="@drawable/success_icon"
+            android:background="@null"/>
+
+
+
+    </RelativeLayout>
+
+
 
 
 </LinearLayout>
