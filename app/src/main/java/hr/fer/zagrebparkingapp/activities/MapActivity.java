@@ -588,7 +588,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void startNotificationService() {
         // Define a time value of 5 seconds
-        Long alertTime = new GregorianCalendar().getTimeInMillis()+3600*1000;
+        Long alertTime = new GregorianCalendar().getTimeInMillis()+5*1000;
 
         // Define our intention of executing AlertReceiver
         Intent alertIntent = new Intent(this, NotificationService.class);

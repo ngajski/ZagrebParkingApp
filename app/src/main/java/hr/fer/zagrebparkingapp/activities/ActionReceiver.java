@@ -1,5 +1,6 @@
 package hr.fer.zagrebparkingapp.activities;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,10 +20,13 @@ public class ActionReceiver extends BroadcastReceiver {
         }
         switch (intent.getAction()) {
             case "Renew":
-                Utilities.generateSMS(context, );
+                //Utilities.generateSMS(context, Utilities.getPayment());
                 break;
             case "Close":
-                Log.d("Close", "Close");
+                // Gets a NotificationManager which is used to notify the user of the background event
+                NotificationManager mNotificationManager =
+                        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                mNotificationManager.cancel(1);
                 break;
         }
 
