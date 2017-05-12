@@ -66,9 +66,35 @@ public class HistoryFragment extends Fragment {
 
         mListView = (ListView) historyView.findViewById(R.id.listHistory);
         mListView.setAdapter(arrayAdapter);
-//        registerForContextMenu(mListView);
+        registerForContextMenu(mListView);
 //        mListView.setOnItemClickListener((adapterView, view, i, l) -> openContextMenu(view));
 //        mListView.setOnItemClickListener((myView,view,j,l) -> openContextMenu(view));
+        mListView.setOnItemClickListener((listView, view, position, id) -> {
+            LayoutInflater factory = LayoutInflater.from(view.getContext());
+
+            final View textEntryView = factory.inflate(R.layout.payment_check, null);
+
+            TextView zone = (TextView) textEntryView.findViewById(R.id.currentZone);
+            TextView car = (TextView) textEntryView.findViewById(R.id.currentCar);
+            TextView hours = (TextView) textEntryView.findViewById(R.id.numOfHours);
+            TextView price = (TextView) textEntryView.findViewById(R.id.priceSum);
+            TextView time = (TextView) textEntryView.findViewById(R.id.timePaid);
+
+            Payment payment = payments.get(position);
+
+            zone.setText(payment.getZone());
+            car.setText(payment.getCar());
+            hours.setText(payment.getNumOfHours()+"");
+            price.setText(payment.getPrice()+"");
+            time.setText(payment.getPaymentTime());
+
+            final AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
+            alert.setIcon(R.drawable.icon_car)
+                    .setTitle("Detalji o plaćanju")
+                    .setView(textEntryView);
+            alert.create().show();
+
+        });
 
         paymentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -144,6 +170,30 @@ public class HistoryFragment extends Fragment {
                             .setNegativeButton("Da", dialogClickListener)
                             .setPositiveButton("Ne", dialogClickListener)
                             .show();
+                });
+
+                view.setOnClickListener(viewX -> {
+                    LayoutInflater factory = LayoutInflater.from(getActivity());
+
+                    final View textEntryView = factory.inflate(R.layout.payment_detail, null);
+
+                    TextView currZone = (TextView) textEntryView.findViewById(R.id.currentZone);
+                    TextView currCar = (TextView) textEntryView.findViewById(R.id.currentCar);
+                    TextView hours = (TextView) textEntryView.findViewById(R.id.numOfHours);
+                    TextView price = (TextView) textEntryView.findViewById(R.id.priceSum);
+                    TextView timePaid = (TextView) textEntryView.findViewById(R.id.timePaid);
+
+                    currZone.setText(payment.getZone());
+                    currCar.setText(payment.getCar());
+                    hours.setText(payment.getNumOfHours()+"");
+                    price.setText(payment.getPrice()+"");
+                    timePaid.setText(payment.getPaymentTime());
+
+                    final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setIcon(R.drawable.bill_icon)
+                            .setTitle("Detalji o plaćanju")
+                            .setView(textEntryView);
+                    alert.create().show();
                 });
 
                 return view;
