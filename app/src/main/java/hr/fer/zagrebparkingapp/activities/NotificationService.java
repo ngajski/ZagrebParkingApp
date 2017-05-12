@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
 import hr.fer.zagrebparkingapp.R;
@@ -43,14 +45,18 @@ public class NotificationService extends BroadcastReceiver{
                         .addAction(R.drawable.ic_done_button, "Produži", notificIntent1)
                         .addAction(R.drawable.ic_exit_button, "Zatvori", notificIntent2);
 
+        long[] v = {500,1000};
+        mBuilder.setVibrate(v);
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        mBuilder.setSound(uri);
+
         // Set the default notification option
         // DEFAULT_SOUND : Make sound
         // DEFAULT_VIBRATE : Vibrate
         // DEFAULT_LIGHTS : Use the default light notification
-        mBuilder.setDefaults(Notification.DEFAULT_SOUND);
 
         // Auto cancels the notification when clicked on in the task bar
-        mBuilder.setAutoCancel(true);
+        mBuilder.setAutoCancel(false);
 
         // Gets a NotificationManager which is used to notify the user of the background event
         NotificationManager mNotificationManager =

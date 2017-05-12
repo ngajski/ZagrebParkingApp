@@ -1,7 +1,9 @@
 package hr.fer.zagrebparkingapp.activities;
 
 import android.app.ActivityOptions;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -60,6 +62,7 @@ import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -571,6 +574,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 payments.add(payment);
 //                try {
 //                    Utilities.generateSMS(this, payment);
+                      startNotificationService();
 //                } catch (Exception ex) {
 //                    Toast.makeText(context, "Neuspjelo plaćanje, IllegalArgument", Toast.LENGTH_LONG).show();
 //                    payments.remove(payment);
@@ -580,6 +584,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         );
         alert.setCancelable(false);
         alert.create().show();
+    }
+
+    private void startNotificationService() {
+        // Define a time value of 5 seconds
+        Long alertTime = new GregorianCalendar().getTimeInMillis()+3600*1000;
+
+        // Define our intention of executing AlertReceiver
+        Intent alertIntent = new Intent(this, NotificationService.class);
+
+        // Allows you to schedule for your application to do something at a later date
+        // even if it is in he background or isn't active
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        // set() schedules an alarm to trigger
+        // Trigger for alertIntent to fire in 5 seconds
+        // FLAG_UPDATE_CURRENT : Update the Intent if active
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alertTime,
+                PendingIntent.getBroadcast(this, 1, alertIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
 }
