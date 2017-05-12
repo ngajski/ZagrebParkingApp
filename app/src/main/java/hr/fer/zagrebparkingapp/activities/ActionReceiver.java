@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import hr.fer.zagrebparkingapp.Utilities;
+
 /**
  * Created by Martin on 12-May-17.
  */
@@ -17,7 +19,7 @@ public class ActionReceiver extends BroadcastReceiver {
         }
         switch (intent.getAction()) {
             case "Renew":
-                Log.d("Renew", "Renew");
+                Utilities.generateSMS(context, );
                 break;
             case "Close":
                 Log.d("Close", "Close");
