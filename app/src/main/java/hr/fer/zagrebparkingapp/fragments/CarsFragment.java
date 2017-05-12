@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -103,7 +101,7 @@ public class CarsFragment extends Fragment {
 
 
     private ArrayAdapter<CarInfo> initializeAdapter() {
-        return new ArrayAdapter<CarInfo>(getActivity(), R.layout.list_row, R.id.title, cars) {
+        return new ArrayAdapter<CarInfo>(getActivity(), R.layout.list_row_car, R.id.title, cars) {
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {

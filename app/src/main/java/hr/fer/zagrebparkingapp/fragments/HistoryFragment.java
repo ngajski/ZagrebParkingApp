@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -45,7 +46,7 @@ public class HistoryFragment extends Fragment {
     private ListView mListView;
     private ArrayAdapter<Payment> arrayAdapter;
 
-    private Button btnHome;
+    private ImageButton btnHome;
 
     private FirebaseDatabase database;
     private DatabaseReference paymentsRef;
@@ -65,9 +66,9 @@ public class HistoryFragment extends Fragment {
 
         mListView = (ListView) historyView.findViewById(R.id.listHistory);
         mListView.setAdapter(arrayAdapter);
-        registerForContextMenu(mListView);
-        mListView.setOnItemClickListener((adapterView, view, i, l) -> openContextMenu(view));
-        mListView.setOnItemClickListener((myView,view,j,l) -> openContextMenu(view));
+//        registerForContextMenu(mListView);
+//        mListView.setOnItemClickListener((adapterView, view, i, l) -> openContextMenu(view));
+//        mListView.setOnItemClickListener((myView,view,j,l) -> openContextMenu(view));
 
         paymentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -85,7 +86,7 @@ public class HistoryFragment extends Fragment {
             }
         });
 
-        btnHome = (Button) historyView.findViewById(R.id.btnHistoryPovratak);
+        btnHome = (ImageButton) historyView.findViewById(R.id.btnHistoryPovratak);
         btnHome.setOnClickListener(v -> {
             paymentsRef.setValue(payments);
             Intent intent = new Intent();
@@ -98,24 +99,52 @@ public class HistoryFragment extends Fragment {
 
 
     private ArrayAdapter<Payment> initializeAdapter() {
-        return new ArrayAdapter<Payment>(getActivity(), R.layout.textview_for_listview, R.id.textViewListView1, payments) {
+        return new ArrayAdapter<Payment>(getActivity(), R.layout.list_row_payment, R.id.titlePayment, payments) {
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
 
-                TextView text1 = (TextView) view.findViewById(R.id.textViewListView1);
-                TextView text2 = (TextView) view.findViewById(R.id.textViewListView2);
+                TextView title = (TextView) view.findViewById(R.id.titlePayment);
+                TextView zone = (TextView) view.findViewById(R.id.zonePayment);
+                TextView time = (TextView) view.findViewById(R.id.timePayment);
+
+                ImageButton delete = (ImageButton) view.findViewById(R.id.deletePayment);
 
                 Payment payment = payments.get(position);
 
                 if (payment.getCar() != null ) {
-                    text1.setText(payment.getCar());
+                    title.setText(payment.getCar());
                 }
 
                 if (payment.getZone() != null) {
-                    text2.setText(payment.getZone() + " " + payment.getPrice());
+                    zone.setText(payment.getZone() + " " + payment.getPrice());
                 }
+
+                if (payment.getPaymentTime() != null) {
+                    zone.setText(payment.getPaymentTime());
+                }
+
+                delete.setOnClickListener(viewX -> {
+                    DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                int index = position;
+                                payments.remove(index);
+                                arrayAdapter.notifyDataSetChanged();
+                                break;
+                        }
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("Jeste li sigurni da želite obrisati ovo plaćanje?")
+                            .setNegativeButton("Da", dialogClickListener)
+                            .setPositiveButton("Ne", dialogClickListener)
+                            .show();
+                });
 
                 return view;
             }

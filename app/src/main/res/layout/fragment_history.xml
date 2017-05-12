@@ -5,11 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_background"
     android:orientation="vertical"
     app:layout_constraintBottom_toBottomOf="parent"
     tools:layout_editor_absoluteX="8dp">
-
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -21,32 +19,29 @@
             android:id="@+id/listHistory"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:divider="#000000"
             android:dividerHeight="2px" />
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:orientation="horizontal"
-        android:weightSum="1">
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
 
-        <Button
+        <ImageButton
             android:id="@+id/btnHistoryPovratak"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="15dp"
-            android:layout_weight="0.19"
-            android:text="Početna"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
+            android:layout_centerVertical="true"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:cropToPadding="false"
+            android:src="@drawable/left_arrow_icon"
+            android:background="@null"/>
 
+    </RelativeLayout>
 
 </LinearLayout>

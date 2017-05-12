@@ -5,7 +5,6 @@
     android:orientation="horizontal"
     android:padding="5dip" >
 
-    <!--  ListRow Left sied Thumbnail image -->
     <LinearLayout android:id="@+id/thumbnail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,45 +16,46 @@
             android:id="@+id/list_image"
             android:layout_width="50dip"
             android:layout_height="50dip"
-            android:src="@drawable/icon_car"/>
+            android:src="@drawable/bill_icon"/>
 
     </LinearLayout>
 
-    <!-- Title Of Song-->
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/titlePayment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
-        android:text="Auto"
+        android:text="Auto:REGISTRACIJA"
         android:textColor="#040404"
         android:typeface="sans"
-        android:textSize="20dip"
+        android:textSize="15dip"
         android:textStyle="bold"/>
 
-    <!-- Artist Name -->
     <TextView
-        android:id="@+id/detail"
+        android:id="@+id/zonePayment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/title"
-        android:text="REGISTRACIJA"
+        android:layout_below="@id/titlePayment"
+        android:text="ZONA"
         android:textColor="#343434"
         android:textSize="15dip"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"/>
 
-    <!--<LinearLayout android:id="@+id/editCarButton"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:padding="3dip"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:background="#F5F5DC"-->
-        <!--android:layout_marginRight="2dip"-->
-        <!--android:layout_marginLeft="2dip">-->
+    <TextView
+        android:id="@+id/timePayment"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/zonePayment"
+        android:text="DD-MM-GGGG : HH-MM"
+        android:textColor="#343434"
+        android:textSize="15dip"
+        android:layout_marginTop="1dip"
+        android:layout_toRightOf="@+id/thumbnail"/>
+
     <ImageButton
-        android:id="@+id/deleteCar"
+        android:id="@+id/deletePayment"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentRight="true"
@@ -66,33 +66,5 @@
         android:cropToPadding="false"
         android:src="@drawable/error_icon"
         android:background="@null"/>
-
-    <ImageButton
-        android:id="@+id/editCar"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_toLeftOf="@id/deleteCar"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
-        android:scaleType="fitXY"
-        android:adjustViewBounds="true"
-        android:cropToPadding="false"
-        android:src="@drawable/edit_icon"
-        android:background="@null"/>
-
-    <!--</LinearLayout>-->
-
-    <!--<LinearLayout android:id="@+id/removeCarButton"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:padding="3dip"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:background="#F5F5DC"-->
-        <!--android:layout_marginRight="2dip"-->
-        <!--android:layout_marginLeft="2dip">-->
-
-
-
-    <!--</LinearLayout>-->
 
 </RelativeLayout>
