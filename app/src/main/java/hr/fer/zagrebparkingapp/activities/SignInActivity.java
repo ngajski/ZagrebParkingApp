@@ -2,17 +2,25 @@ package hr.fer.zagrebparkingapp.activities;
 
 import android.Manifest;
 import android.app.ActivityOptions;
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.transition.Explode;
 import android.transition.Fade;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -32,6 +40,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.GregorianCalendar;
 
 import hr.fer.zagrebparkingapp.R;
 
@@ -53,7 +63,6 @@ public class SignInActivity extends AppCompatActivity implements
     private SignInButton signInButton;
 
     private static final int REQUEST_PERMISSIONS = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +113,7 @@ public class SignInActivity extends AppCompatActivity implements
         };
 
     }
+
 
     private void setWindowTransition() {
         Explode ex = new Explode();
