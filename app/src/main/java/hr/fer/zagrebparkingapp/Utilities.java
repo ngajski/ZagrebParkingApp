@@ -12,10 +12,20 @@ import hr.fer.zagrebparkingapp.model.Payment;
 
 public class Utilities {
 
-    public static void generateSMS(Context context, Payment payment) {
-        SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage("700103", null, "ZG6230DV", null, null);
+    public static Payment payment;
+
+    public static void generateSMS(Context context, Payment currPayment) {
+        payment = currPayment;
+        SmsManager sentSMS = SmsManager.getDefault();
+        sentSMS.sendTextMessage("700103", null, "ZG6230DV", null, null);
         Toast.makeText(context, "Uspješno plaćanje", Toast.LENGTH_LONG).show();
     }
 
+    public static Payment getPayment() {
+        return payment;
+    }
+
+    public static void setPayment(Payment payment) {
+        Utilities.payment = payment;
+    }
 }
