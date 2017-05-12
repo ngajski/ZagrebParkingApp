@@ -64,6 +64,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import hr.fer.zagrebparkingapp.R;
+import hr.fer.zagrebparkingapp.Utilities;
 import hr.fer.zagrebparkingapp.model.CarInfo;
 import hr.fer.zagrebparkingapp.model.Coordinate;
 import hr.fer.zagrebparkingapp.model.Garage;
@@ -305,6 +306,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if(id == R.id.carsItem) {
             Intent intent = new Intent("hr.fer.zagrebparkingapp.activities.TabActivity");
             intent.putExtra("priority", "Cars");
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
             startActivity(intent);
             return true;
         }
@@ -312,6 +315,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if(id == R.id.paymentsItem) {
             Intent intent = new Intent("hr.fer.zagrebparkingapp.activities.TabActivity");
             intent.putExtra("priority", "Payments");
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
             startActivity(intent);
             return true;
         }
@@ -320,6 +325,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mFirebaseAuth.signOut();
             Auth.GoogleSignInApi.signOut(authGoogleApiClient);
             username = "ANONYMOUS";
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
             startActivity(new Intent(this, SignInActivity.class), ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
             return true;
         }
@@ -562,6 +569,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 double price = 5;
                 Payment payment = new Payment(coordinate, car, zone, time, hours, price);
                 payments.add(payment);
+//                try {
+//                    Utilities.generateSMS(this, payment);
+//                } catch (Exception ex) {
+//                    Toast.makeText(context, "Neuspjelo plaćanje, IllegalArgument", Toast.LENGTH_LONG).show();
+//                    payments.remove(payment);
+//                }
                 paymentsRef.setValue(payments);
             }
         );
