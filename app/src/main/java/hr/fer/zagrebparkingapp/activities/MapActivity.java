@@ -2,24 +2,18 @@ package hr.fer.zagrebparkingapp.activities;
 
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 
 import android.os.AsyncTask;
-import android.provider.Telephony;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -64,9 +58,6 @@ import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -88,8 +79,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private LocationRequest mLocationRequest;
     private GoogleApiClient authGoogleApiClient;
     private GoogleApiClient locationGoogleApiClient;
-    private LatLng latLng;
-    private Marker currLocationMarker;
 
     private String time;
     private String currentTime;
@@ -306,32 +295,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Slide slide = new Slide();
         slide.setDuration(1000);
         getWindow().setExitTransition(slide);
-    }
-
-    public void readSms(Context context) {
-
-        ContentResolver cr = context.getContentResolver();
-        Cursor c = cr.query(Telephony.Sms.CONTENT_URI, null, null, null, null);
-        int totalSMS = 0;
-        if (c != null) {
-            totalSMS = c.getCount();
-            if (c.moveToFirst()) {
-                for (int j = 0; j < totalSMS; j++) {
-                    String number = c.getString(c.getColumnIndexOrThrow(Telephony.Sms.ADDRESS));
-                    if(number.equals("700103")){
-                        String body = c.getString(c.getColumnIndexOrThrow(Telephony.Sms.BODY));
-                        time = body.substring(body.indexOf(':')-2, body.indexOf(':')+3);
-                        Toast.makeText(this, time, Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-                    c.moveToNext();
-                }
-            }
-        } else {
-            Toast.makeText(this, "No message to show!", Toast.LENGTH_SHORT).show();
-        }
-
-
     }
 
     @Override
@@ -567,20 +530,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Spinner zoneSpinner = (Spinner) textEntryView.findViewById(R.id.zoneSpinner);
         TextView currentCar = (TextView) textEntryView.findViewById(R.id.currentCar);
-        TextView numOfHours = (TextView) textEntryView.findViewById(R.id.numOfHours);
+        Spinner hoursSpinner = (Spinner) textEntryView.findViewById(R.id.numOfHours);
         TextView priceSum = (TextView) textEntryView.findViewById(R.id.priceSum);
 
-        List<String> zoneNames = getZoneNamesList();
+        List<String> zoneNames = Zone.getZoneNamesList(zones);
         ArrayAdapter<String> dataAdapter;
         dataAdapter = new ArrayAdapter<String>(this,
                 R.layout.spinner_item, zoneNames);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         zoneSpinner.setAdapter(dataAdapter);
+        int position = Zone.findZonePosition(currZone,zoneNames);
+        zoneSpinner.setSelection(position);
 
         currentCar.setText(registrationSpinner.getSelectedItem().toString());
 
-        numOfHours.setText("novo"); /////////
-        priceSum.setText("novo"); /////////
+        priceSum.setText(currentPrice);
 
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setIcon(R.drawable.icon_car)
@@ -593,7 +557,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Coordinate coordinate = new Coordinate(currLat, currLong);
                 String car =  registrationSpinner.getSelectedItem().toString();
                 String zone = zoneSpinner.getSelectedItem().toString();
-                //Calendar paymentTime = Calendar.getInstance();
                 String time = "sada";
                 double hours = 1;
                 double price = 5;
@@ -604,14 +567,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         );
         alert.setCancelable(false);
         alert.create().show();
-    }
-
-    private List<String> getZoneNamesList() {
-        List<String> names = new LinkedList<>();
-        for(Zone z : zones) {
-            names.add(z.getName());
-        }
-        return names;
     }
 
 }

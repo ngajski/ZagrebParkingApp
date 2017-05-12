@@ -13,6 +13,10 @@
         android:weightSum="1">
 
         <TextView
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:id="@+id/zone"
             android:layout_width="112dp"
             android:layout_height="match_parent"
@@ -30,6 +34,7 @@
 
         <Spinner
             android:id="@+id/zoneSpinner"
+            style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="15dp"
@@ -46,6 +51,10 @@
 
         <TextView
             android:id="@+id/car"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="112dp"
             android:layout_height="match_parent"
             android:ems="10"
@@ -62,6 +71,10 @@
 
         <TextView
             android:id="@+id/currentCar"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             style="@android:style/Widget.EditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -85,6 +98,10 @@
             android:inputType="textPersonName"
             android:text="BROJ SATI:"
             style="@android:style/Widget.EditText"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:gravity="center"/>
 
         <Space
@@ -93,14 +110,10 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
 
-        <TextView
+        <Spinner
             android:id="@+id/numOfHours"
-            style="@android:style/Widget.EditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="broj sati placanja"
             android:gravity="center"/>
     </LinearLayout>
 
@@ -112,13 +125,31 @@
 
         <TextView
             android:id="@+id/price"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            style="@style/Widget.AppCompat.EditText"
             android:layout_width="112dp"
             android:layout_height="match_parent"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="CIJENA:"
-            style="@android:style/Widget.EditText"
             android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/priceSum"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            style="@android:style/Widget.EditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="textPersonName"
+            android:text="ukupna cijena parkinga" />
 
         <Space
             android:layout_width="wrap_content"
@@ -126,15 +157,6 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
 
-        <TextView
-            android:id="@+id/priceSum"
-            style="@android:style/Widget.EditText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="ukupna cijena parkinga"
-            android:gravity="center"/>
     </LinearLayout>
 
     <LinearLayout
@@ -145,6 +167,10 @@
 
         <TextView
             android:id="@+id/question"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"

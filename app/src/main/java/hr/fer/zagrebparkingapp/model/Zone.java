@@ -173,4 +173,22 @@ public class Zone {
     public String getPrice() {
         return price;
     }
+
+    public static int findZonePosition(String zoneName,List<String> zones) {
+        for (int i = 0; i < zones.size(); ++i) {
+            if (zoneName.equals(zones.get(i))) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public static List<String> getZoneNamesList(List<Zone> zones) {
+        List<String> names = new LinkedList<>();
+        for(Zone z : zones) {
+            names.add(z.getName());
+        }
+        return names;
+    }
 }
