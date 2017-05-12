@@ -12,7 +12,7 @@ import hr.fer.zagrebparkingapp.model.Payment;
 
 public class Utilities {
 
-    public static Payment payment;
+    private static Payment payment;
 
     public static void generateSMS(Context context, Payment currPayment) {
         payment = currPayment;
