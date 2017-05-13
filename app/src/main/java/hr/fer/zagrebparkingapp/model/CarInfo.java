@@ -4,15 +4,15 @@ package hr.fer.zagrebparkingapp.model;
  * Created by Martin on 09-Mar-17.
  */
 
-public class CarInfo {
+public class Car {
 
     private String name;
     private String registrationNumber;
 
-    public CarInfo() {
+    public Car() {
     }
 
-    public CarInfo(String name, String registrationNumber) {
+    public Car(String name, String registrationNumber) {
         this.name = name;
         this.registrationNumber = registrationNumber;
     }
@@ -31,5 +31,10 @@ public class CarInfo {
 
     public void setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

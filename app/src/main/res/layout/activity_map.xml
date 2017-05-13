@@ -1,105 +1,106 @@
-
-
-<LinearLayout xmlns:map="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@drawable/ic_background">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ZagrebParkingApp.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/ZagrebParkingApp.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
 
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="279dp"
-        android:layout_margin="10dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="45dp"
         tools:context="hr.fer.zagrebparkingapp.activities.MapActivity" />
-
-    <TextView
-        android:id="@+id/zoneEditText"
-        android:layout_width="match_parent"
-        android:layout_height="37dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/common_google_signin_btn_text_dark_pressed"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:textAlignment="textStart"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
-        android:textSize="22sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/priceEditText"
-        android:layout_width="match_parent"
-        android:layout_height="37dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/common_google_signin_btn_text_dark_default"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Cijena (1 sat):"
-        android:textAlignment="textStart"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
-        android:textSize="22sp"
-        android:textStyle="bold" />
-
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginLeft="10dp"
-        android:orientation="horizontal"
-        android:weightSum="1">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+
+        <TextView
+            android:id="@+id/zoneEditText"
+            android:layout_width="match_parent"
+            android:layout_height="37dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="60dp"
+            android:text=""
+            android:textAlignment="textStart"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/priceEditText"
+            android:layout_width="match_parent"
+            android:layout_height="37dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Ovdje se parkiranje ne naplaćuje."
+            android:textAlignment="textStart"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="0.97" />
+
 
         <Spinner
             android:id="@+id/regSpinner"
-            android:layout_width="148dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_weight="0.96"
-            android:background="@android:color/background_light"
-            android:popupBackground="?attr/colorButtonNormal" />
-
-        <Space
+            style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="Plati" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floatAddNewCar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_marginLeft="15dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="0dp"
             android:layout_weight="0.06"
-            android:src="@drawable/icon_car"
-            map:backgroundTint="@android:color/holo_red_light"
-            map:fabSize="normal" />
+            android:popupBackground="?attr/colorButtonNormal"
+            android:textAlignment="center" />
+
+        <Button
+            android:id="@+id/payButton"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="11dp"
+            android:layout_gravity="center_horizontal"
+            android:text="Plati"
+            android:textStyle="bold"
+            android:background="@drawable/custimborder"/>
+
+
 
     </LinearLayout>
 
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <Button
-                android:id="@+id/payButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Plati"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="11dp" />
-        </RelativeLayout>
-    </LinearLayout>
-
+</RelativeLayout>
