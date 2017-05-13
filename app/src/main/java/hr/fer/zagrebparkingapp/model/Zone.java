@@ -56,15 +56,14 @@ public class Zone {
         return name;
     }
 
-    public String getNumber() { return number;}
+    public String getNumber() {return number;}
 
     public List<Integer> getHoursAvailable() {
         List<Integer> hourList = new ArrayList<>();
 
-        if (hoursAvailable == 24) {
+        if (hoursAvailable == 24 && name.endsWith("dan")) {
             hourList.add(hoursAvailable);
-        } else {
-
+        } else  {
             for (int h = 1; h <= hoursAvailable; ++h) {
                 hourList.add(h);
             }
@@ -180,6 +179,9 @@ public class Zone {
             case "paromlin" :
                 name = "IV.2.(paromlin) zona";
                 break;
+            case "dva_tri" :
+                name = "II.3. zona";
+                break;
         }
         return name;
     }
@@ -198,7 +200,7 @@ public class Zone {
                 price = "3 kn/h";
                 break;
             case "treca" :
-                price = "1,5 kn/h";
+                price = "1.5 kn/h";
                 break;
             case "cetiri_jedan" :
                 price = "5 kn/dan";
@@ -208,6 +210,9 @@ public class Zone {
                 break;
             case "paromlin" :
                 price = "10 kn/dan";
+                break;
+            case "dva_tri" :
+                price = "3 kn/h";
                 break;
         }
 
@@ -237,6 +242,9 @@ public class Zone {
                 break;
             case "paromlin" :
                 number = "700107";
+                break;
+            case "dva_tri" :
+                number = "700108";
                 break;
         }
 

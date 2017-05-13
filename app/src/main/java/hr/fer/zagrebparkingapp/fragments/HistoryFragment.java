@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -84,7 +83,7 @@ public class HistoryFragment extends Fragment {
             zone.setText(payment.getZone());
             car.setText(payment.getCar());
             hours.setText(payment.getNumOfHours()+"");
-            price.setText(payment.getPrice()+"");
+            price.setText(payment.getHourPrice()+"");
             time.setText(payment.getPaymentTime());
 
             final AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
@@ -130,24 +129,24 @@ public class HistoryFragment extends Fragment {
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
 
-                TextView title = (TextView) view.findViewById(R.id.titlePayment);
-                TextView zone = (TextView) view.findViewById(R.id.zonePayment);
-                TextView time = (TextView) view.findViewById(R.id.timePayment);
+                TextView titleTView = (TextView) view.findViewById(R.id.titlePayment);
+                TextView zoneTView = (TextView) view.findViewById(R.id.zonePayment);
+                TextView timeTView = (TextView) view.findViewById(R.id.timePayment);
 
                 ImageButton delete = (ImageButton) view.findViewById(R.id.deletePayment);
 
                 Payment payment = payments.get(position);
 
                 if (payment.getCar() != null ) {
-                    title.setText(payment.getCar());
+                    titleTView.setText(payment.getCar() +": " + payment.getCompletePrice() + "kn");
                 }
 
                 if (payment.getZone() != null) {
-                    zone.setText(payment.getZone() + " " + payment.getPrice());
+                    zoneTView.setText(payment.getZone() + " " + payment.getHourPrice());
                 }
 
                 if (payment.getPaymentTime() != null) {
-                    zone.setText(payment.getPaymentTime());
+                    timeTView.setText(payment.getPaymentTime());
                 }
 
                 delete.setOnClickListener(viewX -> {
@@ -185,7 +184,7 @@ public class HistoryFragment extends Fragment {
                     currZone.setText(payment.getZone());
                     currCar.setText(payment.getCar());
                     hours.setText(payment.getNumOfHours()+"");
-                    price.setText(payment.getPrice()+"");
+                    price.setText(payment.getHourPrice()+"");
                     timePaid.setText(payment.getPaymentTime());
 
                     final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());

@@ -67,6 +67,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import hr.fer.zagrebparkingapp.R;
+import hr.fer.zagrebparkingapp.Utilities;
 import hr.fer.zagrebparkingapp.model.CarInfo;
 import hr.fer.zagrebparkingapp.model.Coordinate;
 import hr.fer.zagrebparkingapp.model.Garage;
@@ -587,18 +588,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Coordinate coordinate = new Coordinate(currLat, currLong);
                 CarInfo car =  (CarInfo) registrationSpinner.getSelectedItem();
                 Zone zone = (Zone) zoneSpinner.getSelectedItem();
-                String time = "sada";
+
                 int numOfHours = (int) hoursSpinner.getSelectedItem();
 
-                Payment payment = new Payment(coordinate, car, zone, time,numOfHours);
+                Payment payment = new Payment(coordinate, car, zone,numOfHours);
 
-//                try {
-//                    Utilities.generateSMS(this, payment);
-                      startNotificationService();
-//                } catch (Exception ex) {
-//                    Toast.makeText(context, "Neuspjelo plaćanje, IllegalArgument", Toast.LENGTH_LONG).show();
-//                    payments.remove(payment);
-//                }
+                try {
+                    Utilities.generateSMS(this, car,zone,payment);
+                    startNotificationService();
+                } catch (Exception ex) {
+                    Toast.makeText(context, "Neuspjelo plaćanje, IllegalArgument", Toast.LENGTH_LONG).show();
+                   payments.remove(payment);
+              }
+
+                payments.add(payment);
                 paymentsRef.setValue(payments);
             }
         );
