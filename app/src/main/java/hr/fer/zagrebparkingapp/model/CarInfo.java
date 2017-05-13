@@ -4,15 +4,15 @@ package hr.fer.zagrebparkingapp.model;
  * Created by Martin on 09-Mar-17.
  */
 
-public class Car {
+public class CarInfo {
 
     private String name;
     private String registrationNumber;
 
-    public Car() {
+    public CarInfo() {
     }
 
-    public Car(String name, String registrationNumber) {
+    public CarInfo(String name, String registrationNumber) {
         this.name = name;
         this.registrationNumber = registrationNumber;
     }

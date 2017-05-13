@@ -67,7 +67,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import hr.fer.zagrebparkingapp.R;
-import hr.fer.zagrebparkingapp.Utilities;
 import hr.fer.zagrebparkingapp.model.CarInfo;
 import hr.fer.zagrebparkingapp.model.Coordinate;
 import hr.fer.zagrebparkingapp.model.Garage;
@@ -90,16 +89,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private double currLat;
     private double currLong;
 
-    private String currZone;
-    private String currentPrice;
+    private Zone currentZone;
 
-    private ArrayAdapter<String> dataAdapter;
+    //private ArrayAdapter<String> dataAdapter;
     private Spinner registrationSpinner;
     private TextView zoneTextView;
 
     private TextView priceTextView;
     private Button payButton;
-    private Button readButton;
 
     private boolean isStartup = true;
 
@@ -120,7 +117,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private String useremail;
 
     private List<Payment> payments;
-    private List<String> carInfos;
+    private List<CarInfo> cars;
     private List<Marker> carMarkers;
 
     private ContextMenuDialogFragment mMenuDialogFragment;
@@ -168,7 +165,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         AsyncTaskRunner task = new AsyncTaskRunner();
         task.execute();
 
-        carInfos = new ArrayList<>();
+        cars = new ArrayList<>();
         payments = new ArrayList<>();
         database = FirebaseDatabase.getInstance();
 
@@ -184,8 +181,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         registrationSpinner = (Spinner) findViewById(R.id.regSpinner);
-        dataAdapter = new ArrayAdapter<String>(this,
-                R.layout.spinner_item, carInfos);
+        ArrayAdapter<CarInfo> dataAdapter = new ArrayAdapter<CarInfo>(this,
+                R.layout.spinner_item, cars);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         registrationSpinner.setAdapter(dataAdapter);
@@ -228,14 +225,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
 
                 if(cars == null) {
-                    carInfos.add("Trenutno nemate odabran auto ->");
-                    dataAdapter.notifyDataSetChanged();
-                    return;
+                    //TODO pokrenuti dodavanje auta
                 }
 
                 for(CarInfo info : cars) {
-                    //carInfos.add(info.getName() + ":" + info.getRegistrationNumber());
-                    carInfos.add(info.getName());
+                    MapActivity.this.cars.add(info);
                 }
                 dataAdapter.notifyDataSetChanged();
             }
@@ -278,6 +272,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             }
         });
+
+        if (currentZone == null) {
+            payButton.setEnabled(false);
+        }
     }
 
     private void buildGoogleApiClient() {
@@ -471,20 +469,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         boolean found = false;
         for(Zone z: zones) {
             if(z.isCoordinateInZone(c)) {
-                currZone = z.getName();
-                currentPrice = z.getPrice();
+                currentZone = z;
                 found = true;
                 break;
             }
         }
 
         if(found) {
-            zoneTextView.setText(currZone);
-            priceTextView.setText(currentPrice);
+            zoneTextView.setText(currentZone.getName());
+            priceTextView.setText(currentZone.getPrice());
             payButton.setEnabled(true);
         } else {
-            zoneTextView.setText("Ovdje se parkiranje ne naplaćuje");
-            priceTextView.setText("");
+            zoneTextView.setText("");
+            priceTextView.setText("Ovdje se parkiranje ne naplaćuje");
             payButton.setEnabled(false);
         }
 
@@ -539,22 +536,45 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         final View textEntryView = factory.inflate(R.layout.payment_check, null);
 
         Spinner zoneSpinner = (Spinner) textEntryView.findViewById(R.id.zoneSpinner);
-        TextView currentCar = (TextView) textEntryView.findViewById(R.id.currentCar);
+        TextView carTView = (TextView) textEntryView.findViewById(R.id.currentCar);
         Spinner hoursSpinner = (Spinner) textEntryView.findViewById(R.id.numOfHours);
-        TextView priceSum = (TextView) textEntryView.findViewById(R.id.priceSum);
+        TextView priceTView = (TextView) textEntryView.findViewById(R.id.priceSum);
 
-        List<String> zoneNames = Zone.getZoneNamesList(zones);
-        ArrayAdapter<String> dataAdapter;
-        dataAdapter = new ArrayAdapter<String>(this,
-                R.layout.spinner_item, zoneNames);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        zoneSpinner.setAdapter(dataAdapter);
-        int position = Zone.findZonePosition(currZone,zoneNames);
+        carTView.setText(registrationSpinner.getSelectedItem().toString());
+
+        // init zone spinner
+        ArrayAdapter<Zone> zoneAdapter = new ArrayAdapter<Zone>(this,
+                R.layout.spinner_item, zones);
+        zoneAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        zoneSpinner.setAdapter(zoneAdapter);
+        int position = Zone.findZonePosition(currentZone,zones);
         zoneSpinner.setSelection(position);
 
-        currentCar.setText(registrationSpinner.getSelectedItem().toString());
+        // init hours spinner
+        Zone selectedZone = (Zone) zoneSpinner.getSelectedItem();
+        ArrayAdapter<Integer> hoursSpinnerAdapter = new ArrayAdapter<Integer>(this,
+                R.layout.spinner_item,selectedZone.getHoursAvailable());
+        hoursSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        hoursSpinner.setAdapter(hoursSpinnerAdapter);
 
-        priceSum.setText(currentPrice);
+        // listen to changes in zone spinner
+        zoneSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Zone selectedZone = (Zone) zoneSpinner.getSelectedItem();
+                hoursSpinnerAdapter.clear();
+                hoursSpinnerAdapter.addAll(selectedZone.getHoursAvailable());
+                hoursSpinnerAdapter.notifyDataSetChanged();
+
+                priceTView.setText(selectedZone.getPrice());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        priceTView.setText(currentZone.getPrice());
 
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setIcon(R.drawable.icon_car)
@@ -565,13 +585,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             })
             .setPositiveButton("DA", (dialog, whichButton) -> {
                 Coordinate coordinate = new Coordinate(currLat, currLong);
-                String car =  registrationSpinner.getSelectedItem().toString();
-                String zone = zoneSpinner.getSelectedItem().toString();
+                CarInfo car =  (CarInfo) registrationSpinner.getSelectedItem();
+                Zone zone = (Zone) zoneSpinner.getSelectedItem();
                 String time = "sada";
-                double hours = 1;
-                double price = 5;
-                Payment payment = new Payment(coordinate, car, zone, time, hours, price);
-                payments.add(payment);
+                int numOfHours = (int) hoursSpinner.getSelectedItem();
+
+                Payment payment = new Payment(coordinate, car, zone, time,numOfHours);
+
 //                try {
 //                    Utilities.generateSMS(this, payment);
                       startNotificationService();

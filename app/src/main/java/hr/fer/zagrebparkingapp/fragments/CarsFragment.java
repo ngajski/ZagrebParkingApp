@@ -113,13 +113,13 @@ public class CarsFragment extends Fragment {
                 ImageButton edit = (ImageButton) view.findViewById(R.id.editCar);
                 ImageButton delete = (ImageButton) view.findViewById(R.id.deleteCar);
 
-                CarInfo carInfo = cars.get(position);
+                CarInfo car = cars.get(position);
 
-                if (carInfo.getName() != null && !carInfo.getName().isEmpty()) {
-                    title.setText(carInfo.getName());
+                if (car.getName() != null && !car.getName().isEmpty()) {
+                    title.setText(car.getName());
                 }
-                if(carInfo.getRegistrationNumber() != null && !carInfo.getRegistrationNumber().isEmpty()) {
-                    detail.setText(carInfo.getRegistrationNumber());
+                if(car.getRegistrationNumber() != null && !car.getRegistrationNumber().isEmpty()) {
+                    detail.setText(car.getRegistrationNumber());
                 }
 
                 edit.setOnClickListener(viewX -> {
@@ -238,9 +238,9 @@ public class CarsFragment extends Fragment {
                             "Unesite ispravne podatke, polja ne smiju biti prazna!",
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    CarInfo carInfo = new CarInfo(carName.getText().toString(),
+                    CarInfo car = new CarInfo(carName.getText().toString(),
                             registrationNumber.getText().toString());
-                    cars.add(carInfo);
+                    cars.add(car);
 
                     arrayAdapter.notifyDataSetChanged();
                     dialog.dismiss();
