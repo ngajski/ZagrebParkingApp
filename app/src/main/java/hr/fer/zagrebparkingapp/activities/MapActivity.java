@@ -225,8 +225,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     cars.add(child.getValue(CarInfo.class));
                 }
 
-                if(cars == null) {
-                    //TODO pokrenuti dodavanje auta
+                if(cars.size() == 0) {
+                    Intent intent = new Intent("hr.fer.zagrebparkingapp.activities.TabActivity");
+                    intent.putExtra("priority", "Cars");
+                    startActivity(intent);
+
                 }
 
                 for(CarInfo info : cars) {
@@ -330,6 +333,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
             startActivity(new Intent(this, SignInActivity.class), ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            finish();
             return true;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -343,7 +347,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            moveTaskToBack(true);
         }
     }
 
@@ -382,6 +386,29 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         protected Void doInBackground(Object... strings) {
             zones = new LinkedList<>(Zone.loadCoordinates(context.getAssets()));
             garages = new LinkedList<>(Garage.loadCoordinates(context.getAssets()));
+            return null;
+        }
+    }
+
+    private class AsyncTaskPayment extends AsyncTask<Integer, Object, Void> {
+
+        @Override
+        protected Void doInBackground(Integer... integers) {
+            int numOfHours = integers[0];
+            try {
+                if(numOfHours == 1) {
+                    //Utilities.generateSMS(this, car, zone, payment);
+                } else {
+                    for (int i = 0; i < numOfHours; i++) {
+                        //Utilities.generateSMS(this, car, zone, payment);
+                        Thread.sleep(3000);
+                    }
+                }
+                startNotificationService(numOfHours);
+            } catch (Exception ex) {
+                Toast.makeText(context, "Neuspjelo plaćanje, IllegalArgument", Toast.LENGTH_LONG).show();
+                payments.remove(payments.size() - 1);
+            }
             return null;
         }
     }
@@ -483,7 +510,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         } else {
             zoneTextView.setText("");
             priceTextView.setText("Ovdje se parkiranje ne naplaćuje");
-            payButton.setEnabled(false);
+            payButton.setEnabled(true);
         }
 
     }
@@ -541,7 +568,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Spinner hoursSpinner = (Spinner) textEntryView.findViewById(R.id.numOfHours);
         TextView priceTView = (TextView) textEntryView.findViewById(R.id.priceSum);
 
-        carTView.setText(registrationSpinner.getSelectedItem().toString());
+
+        CarInfo carInfo = (CarInfo) registrationSpinner.getSelectedItem();
+        if(carInfo != null) {
+            carTView.setText(registrationSpinner.getSelectedItem().toString());
+        } else {
+            Intent intent = new Intent("hr.fer.zagrebparkingapp.activities.TabActivity");
+            intent.putExtra("priority", "Cars");
+            startActivity(intent);
+            return;
+        }
 
         // init zone spinner
         ArrayAdapter<Zone> zoneAdapter = new ArrayAdapter<Zone>(this,
@@ -553,6 +589,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // init hours spinner
         Zone selectedZone = (Zone) zoneSpinner.getSelectedItem();
+        if(selectedZone == null) {
+            selectedZone = zones.get(0);
+        }
         ArrayAdapter<Integer> hoursSpinnerAdapter = new ArrayAdapter<Integer>(this,
                 R.layout.spinner_item,selectedZone.getHoursAvailable());
         hoursSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -575,7 +614,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
-        priceTView.setText(currentZone.getPrice());
+        if(currentZone == null) {
+            priceTView.setText(selectedZone.getPrice());
+        } else {
+            priceTView.setText(currentZone.getPrice());
+        }
 
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setIcon(R.drawable.icon_car)
@@ -586,32 +629,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             })
             .setPositiveButton("DA", (dialog, whichButton) -> {
                 Coordinate coordinate = new Coordinate(currLat, currLong);
-                CarInfo car =  (CarInfo) registrationSpinner.getSelectedItem();
+                CarInfo car = (CarInfo) registrationSpinner.getSelectedItem();
                 Zone zone = (Zone) zoneSpinner.getSelectedItem();
 
                 int numOfHours = (int) hoursSpinner.getSelectedItem();
 
-                Payment payment = new Payment(coordinate, car, zone,numOfHours);
-
-                try {
-                    Utilities.generateSMS(this, car,zone,payment);
-                    startNotificationService();
-                } catch (Exception ex) {
-                    Toast.makeText(context, "Neuspjelo plaćanje, IllegalArgument", Toast.LENGTH_LONG).show();
-                   payments.remove(payment);
-              }
+                Payment payment = new Payment(coordinate, car, zone, numOfHours);
 
                 payments.add(payment);
                 paymentsRef.setValue(payments);
+
+                AsyncTaskPayment task = new AsyncTaskPayment();
+                task.execute(numOfHours);
             }
         );
         alert.setCancelable(false);
         alert.create().show();
     }
 
-    private void startNotificationService() {
+    public void startNotificationService(int numOfHours) {
         // Define a time value of 5 seconds
-        Long alertTime = new GregorianCalendar().getTimeInMillis()+5*1000;
+        Long alertTime = new GregorianCalendar().getTimeInMillis()+(numOfHours)*5*1000 - (numOfHours)*3000;
 
         // Define our intention of executing AlertReceiver
         Intent alertIntent = new Intent(this, NotificationService.class);

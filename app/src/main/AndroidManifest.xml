@@ -21,8 +21,8 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/icon_car"
-        android:label="ZagrebParkingApp"
+        android:icon="@drawable/parking_icon"
+        android:label="ZGParking"
         android:supportsRtl="true"
         android:theme="@style/ZagrebParkingApp">
         <meta-data
@@ -31,7 +31,7 @@
         <activity
             android:name=".activities.MapActivity"
             android:icon="@drawable/icon_car"
-            android:label="ZagrebParkingApp"
+            android:label="ZGParking"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="hr.fer.zagrebparkingapp.activities.MapActivity" />
@@ -42,7 +42,7 @@
         <activity
             android:name=".activities.TabActivity"
             android:icon="@drawable/icon_car"
-            android:label="ZagrebParkingApp"
+            android:label="ZGParking"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="hr.fer.zagrebparkingapp.activities.TabActivity" />

@@ -269,6 +269,9 @@ public class Zone {
     }
 
     public static int findZonePosition(Zone zone,List<Zone> zones) {
+        if(zone == null) {
+            return -1;
+        }
         for (int i = 0; i < zones.size(); ++i) {
             if (zone.equals(zones.get(i))) {
                 return i;

@@ -1,10 +1,12 @@
 package hr.fer.zagrebparkingapp.fragments;
 
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.ContextMenu;
@@ -31,6 +33,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 import hr.fer.zagrebparkingapp.R;
+import hr.fer.zagrebparkingapp.activities.MapActivity;
+import hr.fer.zagrebparkingapp.activities.SignInActivity;
 import hr.fer.zagrebparkingapp.activities.TabActivity;
 import hr.fer.zagrebparkingapp.model.CarInfo;
 
@@ -90,15 +94,20 @@ public class CarsFragment extends Fragment {
 
         mButtonZavrsi = (ImageButton) carView.findViewById(R.id.zavrsi);
         mButtonZavrsi.setOnClickListener(v -> {
-            carsRef.setValue(cars);
-            Intent intent = new Intent();
-            ((TabActivity)getActivity()).setResult(RESULT_OK, intent);
-            ((TabActivity)getActivity()).finish();
+            if (cars.size() != 0) {
+                carsRef.setValue(cars);
+                startActivity(new Intent(((TabActivity) getActivity()), MapActivity.class));
+                ((TabActivity) getActivity()).finish();
+            } else {
+                Toast.makeText(((TabActivity)getActivity()),
+                        "Unesite svoj automobil kako biste koristili aplikaciju", Toast.LENGTH_LONG)
+                        .show();
+                carsRef.setValue(cars);
+            }
         });
 
         return carView;
     }
-
 
     private ArrayAdapter<CarInfo> initializeAdapter() {
         return new ArrayAdapter<CarInfo>(getActivity(), R.layout.list_row_car, R.id.title, cars) {
@@ -238,8 +247,8 @@ public class CarsFragment extends Fragment {
                             "Unesite ispravne podatke, polja ne smiju biti prazna!",
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    CarInfo car = new CarInfo(carName.getText().toString(),
-                            registrationNumber.getText().toString());
+                    CarInfo car = new CarInfo(carName.getText().toString().trim(),
+                            registrationNumber.getText().toString().trim());
                     cars.add(car);
 
                     arrayAdapter.notifyDataSetChanged();
@@ -251,8 +260,8 @@ public class CarsFragment extends Fragment {
                             "Unesite ispravne podatke, polja ne smiju biti prazna!",
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    cars.get((int)position).setName(carName.getText().toString());
-                    cars.get((int)position).setName(registrationNumber.getText().toString());
+                    cars.get((int)position).setName(carName.getText().toString().trim());
+                    cars.get((int)position).setRegistrationNumber(registrationNumber.getText().toString().trim());
 
                     arrayAdapter.notifyDataSetChanged();
                     dialog.dismiss();

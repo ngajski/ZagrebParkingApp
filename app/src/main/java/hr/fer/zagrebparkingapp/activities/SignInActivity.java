@@ -114,6 +114,10 @@ public class SignInActivity extends AppCompatActivity implements
 
     }
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 
     private void setWindowTransition() {
         Explode ex = new Explode();
