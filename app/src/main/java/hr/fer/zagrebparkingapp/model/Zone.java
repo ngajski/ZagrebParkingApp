@@ -62,8 +62,9 @@ public class Zone implements Serializable {
     public List<Integer> getHoursAvailable() {
         List<Integer> hourList = new ArrayList<>();
 
-        if (hoursAvailable == 24 && name.endsWith("dan")) {
+        if (hoursAvailable == 24 && price.endsWith("dan")) {
             hourList.add(hoursAvailable);
+            return hourList;
         } else  {
             for (int h = 1; h <= hoursAvailable; ++h) {
                 hourList.add(h);
