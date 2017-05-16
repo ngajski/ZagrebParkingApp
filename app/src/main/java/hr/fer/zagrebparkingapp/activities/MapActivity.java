@@ -262,7 +262,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     Calendar calendar1 = Calendar.getInstance();
                     SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy, HH:mm");
                     String currentDate = formatter1.format(calendar1.getTime());
-                    if(payments.get(payments.size()-1).getPaymentTime().equals(currentDate)) {
+                    if(payments.get(payments.size()-1).getPaymentTime().equals(currentDate)
+                            && payments.get(payments.size()-1).getNumOfHours() != 1) {
                         setParkingMarker();
                     }
                 }
