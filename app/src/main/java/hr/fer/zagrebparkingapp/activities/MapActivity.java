@@ -263,12 +263,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 if(payments != null && payments.size() != 0) {
                     Payment potentialCurrPayment = payments.get(payments.size() - 1);
-                    if (!(Integer.parseInt((potentialCurrPayment.getPaymentTime().split(":")[1]) + potentialCurrPayment.getNumOfHours()) <
+                    if (!((Integer.parseInt((potentialCurrPayment.getPaymentTime().split(":")[1])) + potentialCurrPayment.getNumOfHours()) <
                             Integer.parseInt(currentDate))) {
                         setParkingMarker();
                     } else {
                         removeParkingMarker();
                     }
+                } else {
+                    removeParkingMarker();
                 }
             }
 
@@ -295,7 +297,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
         if (currentZone == null) {
-            payButton.setEnabled(false);
+            payButton.setEnabled(true);
         }
     }
 
@@ -541,7 +543,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     public static void removeParkingMarker() {
-        carMarker.remove();
+        if(carMarker != null)
+            carMarker.remove();
     }
 
     private void alertDialog(String title) {
@@ -629,16 +632,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if(numOfHours == 1) {
                     //Utilities.generateSMS(this, car, zone, payment);
                     startNotificationService();
-                    return;
+                } else {
+
+                    Intent intent = new Intent(MapActivity.this, SplashScreen.class);
+                    intent.putExtra("Hours", numOfHours);
+                    intent.putExtra("Car", car);
+                    intent.putExtra("Zone", zone);
+                    intent.putExtra("Payment", payment);
+
+                    startActivity(intent);
                 }
-
-                Intent intent = new Intent(MapActivity.this, SplashScreen.class);
-                intent.putExtra("Hours", numOfHours);
-                intent.putExtra("Car", car);
-                intent.putExtra("Zone", zone);
-                intent.putExtra("Payment", payment);
-
-                startActivity(intent);
             }
         );
         alert.setCancelable(false);
