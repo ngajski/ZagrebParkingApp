@@ -101,6 +101,15 @@ public class HistoryFragment extends Fragment {
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
                     payments.add(child.getValue(Payment.class));
                 }
+
+                List<Payment> tempList = new ArrayList<Payment>();
+
+                if(payments != null && payments.size() != 0) {
+                    for (int i = payments.size() - 1; i >= 0; i--) {
+                        tempList.add(payments.get(i));
+                    }
+                    payments = tempList;
+                }
                 arrayAdapter.notifyDataSetChanged();
             }
 
