@@ -18,7 +18,11 @@
             android:inputType="textPersonName"
             android:text="ZONA:"
             style="@android:style/Widget.EditText"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
         <Space
             android:layout_width="wrap_content"
@@ -34,7 +38,11 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:text="plaćena zona"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
     </LinearLayout>
 
     <LinearLayout
@@ -51,7 +59,11 @@
             android:inputType="textPersonName"
             android:text="AUTOMOBIL:"
             style="@android:style/Widget.EditText"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
         <Space
             android:layout_width="wrap_content"
@@ -67,7 +79,11 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:text="plaćeni automobil"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
     </LinearLayout>
 
     <LinearLayout
@@ -84,7 +100,11 @@
             android:inputType="textPersonName"
             android:text="BROJ SATI:"
             style="@android:style/Widget.EditText"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
         <Space
             android:layout_width="wrap_content"
@@ -100,7 +120,11 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:text="broj plaćenih sati"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
     </LinearLayout>
 
     <LinearLayout
@@ -117,7 +141,11 @@
             android:inputType="textPersonName"
             android:text="CIJENA:"
             style="@android:style/Widget.EditText"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
         <Space
             android:layout_width="wrap_content"
@@ -133,7 +161,11 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:text="ukupna cijena parkinga"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
     </LinearLayout>
 
     <LinearLayout
@@ -150,7 +182,11 @@
             android:inputType="textPersonName"
             android:text="VRIJEME:"
             style="@android:style/Widget.EditText"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
         <Space
             android:layout_width="wrap_content"
@@ -166,7 +202,11 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:text="vrijeme plaćanja"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
     </LinearLayout>
 
 

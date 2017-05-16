@@ -34,14 +34,12 @@
 
         <Spinner
             android:id="@+id/zoneSpinner"
-            style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="0dp"
             android:layout_marginTop="0dp"
             android:layout_weight="0.96"
-            android:background="@android:color/background_light"
-            android:popupBackground="?attr/colorButtonNormal" />
+            android:popupBackground="#e6f2ff" />
     </LinearLayout>
 
     <LinearLayout
@@ -115,7 +113,8 @@
             android:id="@+id/numOfHours"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:popupBackground="#e6f2ff"/>
     </LinearLayout>
 
     <LinearLayout
