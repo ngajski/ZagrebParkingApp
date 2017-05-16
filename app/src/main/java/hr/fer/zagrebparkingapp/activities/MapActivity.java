@@ -630,7 +630,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 paymentsRef.setValue(payments);
 
 
-                if(numOfHours == 1) {
+                if(numOfHours == 1 || zone.getPrice().endsWith("dan")) {
                     setParkingMarker();
                     SmsManager smsManager = SmsManager.getDefault();
                     Utilities.generateSMS(this, car, zone, payment, smsManager);
