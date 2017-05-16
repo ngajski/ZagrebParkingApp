@@ -1,5 +1,6 @@
 package hr.fer.zagrebparkingapp.model;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -8,7 +9,7 @@ import java.util.Calendar;
  * Created by Vilim on 4.5.2017..
  */
 
-public class Payment {
+public class Payment implements Serializable {
 
     private Coordinate coordinate;
     private String car;
@@ -50,7 +51,7 @@ public class Payment {
         return paymentTime;
     }
 
-    public double getNumOfHours() {
+    public int getNumOfHours() {
         return numOfHours;
     }
 

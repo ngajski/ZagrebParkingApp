@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background_splash"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:id="@+id/rel_layout">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="120dp"
+        android:text="Pričekajte trenutak za validaciju parkirne karte..."
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="35sp"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/activity_splash_progress_bar"
+        style="@android:style/Widget.ProgressBar.Large.Inverse"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/textView"
+        android:layout_marginTop="148dp" />
+
+</RelativeLayout>

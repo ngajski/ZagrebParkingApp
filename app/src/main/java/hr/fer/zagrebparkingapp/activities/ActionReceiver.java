@@ -50,11 +50,13 @@ public class ActionReceiver extends BroadcastReceiver {
                 NotificationManager mNotificationManager1 =
                         (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 mNotificationManager1.cancel(1);
+                try {
+                    Thread.sleep(3000);
+                    MapActivity.removeParkingMarker();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
-
     }
-
-
-
 }

@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -15,7 +16,7 @@ import java.util.List;
  * Created by Vilim on 24.3.2017..
  */
 
-public class Zone {
+public class Zone implements Serializable {
 
     private String name;
     private String price;
@@ -100,7 +101,7 @@ public class Zone {
         return result;
     }
 
-    public static List<Zone>  loadCoordinates(AssetManager am) {
+    public static List<Zone> loadCoordinates(AssetManager am) {
         try {
             List<Zone> zones = new LinkedList<>();
             List<String> files = Arrays.asList(am.list(""));
@@ -125,8 +126,6 @@ public class Zone {
                     List<String> data = Arrays.asList(line.split(" "));
                     if(data.size() != 1) {
                         String type = data.get(0);
-                        Log.d("exception", file);
-                        System.out.print(data);
                         Double lat = Double.parseDouble(data.get(1));
                         Double lon = Double.parseDouble(data.get(2));
                         Coordinate c = new Coordinate(lat, lon);

@@ -1,10 +1,12 @@
 package hr.fer.zagrebparkingapp.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Martin on 09-Mar-17.
  */
 
-public class CarInfo {
+public class CarInfo implements Serializable{
 
     private String name;
     private String registrationNumber;

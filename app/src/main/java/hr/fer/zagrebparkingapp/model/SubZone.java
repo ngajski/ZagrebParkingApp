@@ -1,5 +1,6 @@
 package hr.fer.zagrebparkingapp.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import hr.fer.zagrebparkingapp.model.Coordinate;
@@ -8,7 +9,7 @@ import hr.fer.zagrebparkingapp.model.Coordinate;
  * Created by Vilim on 24.3.2017..
  */
 
-public class SubZone {
+public class SubZone implements Serializable {
 
     private Coordinate upperLeft;
     private Coordinate upperRight;

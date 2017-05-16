@@ -32,6 +32,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,8 +61,10 @@ import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -119,16 +122,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private List<Payment> payments;
     private List<CarInfo> cars;
-    private List<Marker> carMarkers;
+    private static Marker carMarker;
 
     private ContextMenuDialogFragment mMenuDialogFragment;
 
     private TextView userName;
     private TextView userEmail;
 
+    public interface LoadingTaskFinishedListener {
+        void onTaskFinished(); // If you want to pass something back to the listener add a param to this method
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("createMethod", "onCreate()");
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -173,8 +181,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         zoneTextView = (TextView) findViewById(R.id.zoneEditText);
         priceTextView = (TextView) findViewById(R.id.priceEditText);
         payButton = (Button) findViewById(R.id.payButton);
-
-        carMarkers = new LinkedList<>();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -247,12 +253,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         paymentsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                removeParkingMarkers();
                 payments.clear();
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
                     payments.add(child.getValue(Payment.class));
                 }
-                setParkingMarkers();
+                Calendar calendar1 = Calendar.getInstance();
+                SimpleDateFormat formatter1 = new SimpleDateFormat("dd/M/yyyy h:mm");
+                String currentDate = formatter1.format(calendar1.getTime()).split(":")[1];
+
+                if(payments != null && payments.size() != 0) {
+                    Payment potentialCurrPayment = payments.get(payments.size() - 1);
+                    if (!(Integer.parseInt((potentialCurrPayment.getPaymentTime().split(":")[1]) + potentialCurrPayment.getNumOfHours()) <
+                            Integer.parseInt(currentDate))) {
+                        setParkingMarker();
+                    } else {
+                        removeParkingMarker();
+                    }
+                }
             }
 
             @Override
@@ -390,28 +407,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    private class AsyncTaskPayment extends AsyncTask<Integer, Object, Void> {
-
-        @Override
-        protected Void doInBackground(Integer... integers) {
-            int numOfHours = integers[0];
-            try {
-                if(numOfHours == 1) {
-                    //Utilities.generateSMS(this, car, zone, payment);
-                } else {
-                    for (int i = 0; i < numOfHours; i++) {
-                        //Utilities.generateSMS(this, car, zone, payment);
-                        Thread.sleep(3000);
-                    }
-                }
-                startNotificationService(numOfHours);
-            } catch (Exception ex) {
-                Toast.makeText(context, "Neuspjelo plaćanje, IllegalArgument", Toast.LENGTH_LONG).show();
-                payments.remove(payments.size() - 1);
-            }
-            return null;
-        }
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -427,8 +422,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         locationGoogleApiClient.connect();
         while(garages == null);
-        setGarageMarkers();
-        setParkingMarkers();
+        new Thread() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setGarageMarkers();
+                    }
+                });
+            }
+        }.start();
     }
 
 
@@ -441,19 +444,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             locationGoogleApiClient.connect();
 
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.v(this.getClass().getSimpleName(), "onPause()");
-
-        //Disconnect from API onPause()
-        if (locationGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(locationGoogleApiClient, this);
-            locationGoogleApiClient.disconnect();
-        }
-
     }
 
     @Override
@@ -535,27 +525,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    private void setParkingMarkers() {
-        for(Payment p : payments) {
-            MarkerOptions mo = new MarkerOptions();
-            Coordinate c = p.getCoordinate();
-            LatLng ll = new LatLng(c.getLattitude(), c.getLongitude());
-            mo.position(ll);
-            mo.title("Automobil " + p.getCar());
-            mo.snippet("Vrijeme parkiranja: " + p.getPaymentTime());
+    private void setParkingMarker() {
+        Payment p = payments.get(payments.size() - 1);
+        MarkerOptions mo = new MarkerOptions();
+        Coordinate c = p.getCoordinate();
+        LatLng ll = new LatLng(c.getLattitude(), c.getLongitude());
+        mo.position(ll);
+        mo.title("Automobil " + p.getCar());
+        mo.snippet("Vrijeme parkiranja: " + p.getPaymentTime());
 
-            Bitmap gm = BitmapFactory.decodeResource(getResources(), R.drawable.car_marker);
-            gm = Bitmap.createScaledBitmap(gm, 70, 70, false);
-            mo.icon(BitmapDescriptorFactory.fromBitmap(gm));
-            carMarkers.add(mMap.addMarker(mo));
-        }
+        Bitmap gm = BitmapFactory.decodeResource(getResources(), R.drawable.car_marker);
+        gm = Bitmap.createScaledBitmap(gm, 70, 70, false);
+        mo.icon(BitmapDescriptorFactory.fromBitmap(gm));
+        carMarker = mMap.addMarker(mo);
     }
 
-    private void removeParkingMarkers() {
-        for(Marker m : carMarkers) {
-            m.remove();
-        }
-        carMarkers.clear();
+    public static void removeParkingMarker() {
+        carMarker.remove();
     }
 
     private void alertDialog(String title) {
@@ -638,19 +624,29 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 payments.add(payment);
                 paymentsRef.setValue(payments);
+                setParkingMarker();
 
-                AsyncTaskPayment task = new AsyncTaskPayment();
-                task.execute(numOfHours);
+                if(numOfHours == 1) {
+                    //Utilities.generateSMS(this, car, zone, payment);
+                    startNotificationService();
+                    return;
+                }
+
+                Intent intent = new Intent(MapActivity.this, SplashScreen.class);
+                intent.putExtra("Hours", numOfHours);
+                intent.putExtra("Car", car);
+                intent.putExtra("Zone", zone);
+                intent.putExtra("Payment", payment);
+
+                startActivity(intent);
             }
         );
         alert.setCancelable(false);
         alert.create().show();
     }
 
-    public void startNotificationService(int numOfHours) {
-        // Define a time value of 5 seconds
-        Long alertTime = new GregorianCalendar().getTimeInMillis()+(numOfHours)*5*1000 - (numOfHours)*3000;
-
+    public void startNotificationService() {
+        Long alertTime = new GregorianCalendar().getTimeInMillis()+5*1000;
         // Define our intention of executing AlertReceiver
         Intent alertIntent = new Intent(this, NotificationService.class);
 
@@ -665,5 +661,4 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 PendingIntent.getBroadcast(this, 1, alertIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT));
     }
-
 }

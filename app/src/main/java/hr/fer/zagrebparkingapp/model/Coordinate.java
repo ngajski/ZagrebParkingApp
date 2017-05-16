@@ -1,10 +1,12 @@
 package hr.fer.zagrebparkingapp.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Vilim on 24.3.2017..
  */
 
-public class Coordinate {
+public class Coordinate implements Serializable {
 
     private double lattitude;
     private double longitude;
