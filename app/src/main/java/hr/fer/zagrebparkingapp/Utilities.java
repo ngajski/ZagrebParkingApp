@@ -18,14 +18,13 @@ public class Utilities {
     private static CarInfo carInfo;
     private static Zone zone;
 
-    public static void generateSMS(Context context, CarInfo car, Zone currZone, Payment currPayment) {
+    public static void generateSMS(Context context, CarInfo car, Zone currZone, Payment currPayment,
+            SmsManager sentSMS) {
         payment = currPayment;
         carInfo = car;
         zone = currZone;
 
-        SmsManager sentSMS = SmsManager.getDefault();
         sentSMS.sendTextMessage(zone.getNumber(), null, carInfo.getRegistrationNumber(), null, null);
-        Toast.makeText(context, "Plaćanje uspijelo", Toast.LENGTH_LONG).show();
     }
 
     public static CarInfo getCarInfo() {

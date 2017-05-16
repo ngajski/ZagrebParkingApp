@@ -2,6 +2,7 @@ package hr.fer.zagrebparkingapp.activities;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.telephony.SmsManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -46,13 +47,13 @@ public class LoadingTask extends AsyncTask<Integer, Integer, Void> {
     @Override
     protected Void doInBackground(Integer... integers) {
         int numOfHours = integers[0];
+        SmsManager sentSMS = SmsManager.getDefault();
         try {
             for (int i = 0; i < numOfHours; i++) {
-                Utilities.generateSMS(context, car, zone, payment);
+                Utilities.generateSMS(context, car, zone, payment, sentSMS);
                 Thread.sleep(3000);
             }
         } catch (Exception ex) {
-            Toast.makeText(context, "Neuspjelo plaćanje, IllegalArgument", Toast.LENGTH_LONG).show();
         }
         return null;
     }
