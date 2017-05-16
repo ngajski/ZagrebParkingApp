@@ -8,9 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import hr.fer.zagrebparkingapp.R;
+import hr.fer.zagrebparkingapp.model.CarInfo;
+import hr.fer.zagrebparkingapp.model.Payment;
+import hr.fer.zagrebparkingapp.model.Zone;
 
 public class NotificationService extends BroadcastReceiver{
 
@@ -24,7 +28,16 @@ public class NotificationService extends BroadcastReceiver{
 
     public void createNotification(Context context, Intent intent){
 
+        Bundle extras = intent.getExtras();
+        CarInfo carInfo = (CarInfo) extras.getSerializable("car");
+        Zone zone = (Zone) extras.getSerializable("zone");
+        Payment payment = (Payment) extras.getSerializable("payment");
+
         Intent doneIntent = new Intent(context, ActionReceiver.class);
+        doneIntent.putExtra("car", carInfo);
+        doneIntent.putExtra("zone", zone);
+        doneIntent.putExtra("payment", payment);
+
         doneIntent.setAction("Renew");
 
         Intent closeIntent = new Intent(context, ActionReceiver.class);

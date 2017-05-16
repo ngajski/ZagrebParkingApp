@@ -34,7 +34,7 @@ public class SplashScreen extends Activity implements MapActivity.LoadingTaskFin
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.activity_splash_progress_bar);
         // Start your loading
         new LoadingTask(progressBar, this, getApplicationContext(), car, zone, payment).execute(numOfHours);
-        startNotificationService(numOfHours);// Pass in whatever you need a url is just an example we don't use it in this tutorial
+        startNotificationService(numOfHours, car, zone, payment);// Pass in whatever you need a url is just an example we don't use it in this tutorial
     }
     // This is the callback for when your async task has finished
     @Override
@@ -52,7 +52,7 @@ public class SplashScreen extends Activity implements MapActivity.LoadingTaskFin
         startActivity(intent);
     }
 
-    public void startNotificationService(int numOfHours) {
+    public void startNotificationService(int numOfHours, CarInfo car, Zone zone, Payment payment) {
         Long alertTime;
         if(numOfHours == 1) {
             alertTime = new GregorianCalendar().getTimeInMillis()+(numOfHours)*5*1000;
@@ -63,6 +63,9 @@ public class SplashScreen extends Activity implements MapActivity.LoadingTaskFin
 
         // Define our intention of executing AlertReceiver
         Intent alertIntent = new Intent(this, NotificationService.class);
+        alertIntent.putExtra("car", car);
+        alertIntent.putExtra("zone", zone);
+        alertIntent.putExtra("payment", payment);
 
         // Allows you to schedule for your application to do something at a later date
         // even if it is in he background or isn't active

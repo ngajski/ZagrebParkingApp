@@ -23,6 +23,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.transition.Explode;
 import android.transition.Slide;
 import android.util.Log;
@@ -631,8 +632,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 if(numOfHours == 1) {
                     setParkingMarker();
-                    //Utilities.generateSMS(this, car, zone, payment);
-                    startNotificationService();
+                    SmsManager smsManager = SmsManager.getDefault();
+                    Utilities.generateSMS(this, car, zone, payment, smsManager);
+                    startNotificationService(car, zone, payment);
                 } else {
 
                     Intent intent = new Intent(MapActivity.this, SplashScreen.class);
@@ -653,10 +655,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         alert.create().show();
     }
 
-    public void startNotificationService() {
+    public void startNotificationService(CarInfo car, Zone zone, Payment payment) {
         Long alertTime = new GregorianCalendar().getTimeInMillis()+5*1000;
         // Define our intention of executing AlertReceiver
         Intent alertIntent = new Intent(this, NotificationService.class);
+        alertIntent.putExtra("car", car);
+        alertIntent.putExtra("zone", zone);
+        alertIntent.putExtra("payment", payment);
 
         // Allows you to schedule for your application to do something at a later date
         // even if it is in he background or isn't active
