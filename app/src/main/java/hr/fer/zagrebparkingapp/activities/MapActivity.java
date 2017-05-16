@@ -257,20 +257,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
                     payments.add(child.getValue(Payment.class));
                 }
-                Calendar calendar1 = Calendar.getInstance();
-                SimpleDateFormat formatter1 = new SimpleDateFormat("dd/M/yyyy h:mm");
-                String currentDate = formatter1.format(calendar1.getTime()).split(":")[1];
 
                 if(payments != null && payments.size() != 0) {
-                    Payment potentialCurrPayment = payments.get(payments.size() - 1);
-                    if (!((Integer.parseInt((potentialCurrPayment.getPaymentTime().split(":")[1])) + potentialCurrPayment.getNumOfHours()) <
-                            Integer.parseInt(currentDate))) {
+                    Calendar calendar1 = Calendar.getInstance();
+                    SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy, HH:mm");
+                    String currentDate = formatter1.format(calendar1.getTime());
+                    if(payments.get(payments.size()-1).getPaymentTime().equals(currentDate)) {
                         setParkingMarker();
-                    } else {
-                        removeParkingMarker();
                     }
-                } else {
-                    removeParkingMarker();
                 }
             }
 
@@ -440,7 +434,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
       super.onResume();
-
        if (locationGoogleApiClient == null || !locationGoogleApiClient.isConnected()){
             buildGoogleApiClient();
             locationGoogleApiClient.connect();
@@ -528,18 +521,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void setParkingMarker() {
-        Payment p = payments.get(payments.size() - 1);
-        MarkerOptions mo = new MarkerOptions();
-        Coordinate c = p.getCoordinate();
-        LatLng ll = new LatLng(c.getLattitude(), c.getLongitude());
-        mo.position(ll);
-        mo.title("Automobil " + p.getCar());
-        mo.snippet("Vrijeme parkiranja: " + p.getPaymentTime());
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(payments != null && payments.size() != 0) {
+                    Payment p = payments.get(payments.size() - 1);
+                    MarkerOptions mo = new MarkerOptions();
+                    Coordinate c = p.getCoordinate();
+                    LatLng ll = new LatLng(c.getLattitude(), c.getLongitude());
+                    mo.position(ll);
+                    mo.title("Automobil " + p.getCar());
+                    mo.snippet("Vrijeme parkiranja: " + p.getPaymentTime());
 
-        Bitmap gm = BitmapFactory.decodeResource(getResources(), R.drawable.car_marker);
-        gm = Bitmap.createScaledBitmap(gm, 70, 70, false);
-        mo.icon(BitmapDescriptorFactory.fromBitmap(gm));
-        carMarker = mMap.addMarker(mo);
+                    Bitmap gm = BitmapFactory.decodeResource(getResources(), R.drawable.car_marker);
+                    gm = Bitmap.createScaledBitmap(gm, 70, 70, false);
+                    mo.icon(BitmapDescriptorFactory.fromBitmap(gm));
+                    carMarker = mMap.addMarker(mo);
+                }
+            }
+        });
     }
 
     public static void removeParkingMarker() {
@@ -627,9 +627,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 payments.add(payment);
                 paymentsRef.setValue(payments);
-                setParkingMarker();
+
 
                 if(numOfHours == 1) {
+                    setParkingMarker();
                     //Utilities.generateSMS(this, car, zone, payment);
                     startNotificationService();
                 } else {
