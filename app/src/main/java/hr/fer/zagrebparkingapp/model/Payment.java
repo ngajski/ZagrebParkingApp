@@ -1,15 +1,18 @@
 package hr.fer.zagrebparkingapp.model;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Comparator;
 
 /**
  * Created by Vilim on 4.5.2017..
  */
 
-public class Payment implements Serializable {
+public class Payment implements Serializable, Comparable<Payment> {
 
     private Coordinate coordinate;
     private String car;
@@ -61,5 +64,10 @@ public class Payment implements Serializable {
 
     public double getCompletePrice() {
         return completePrice;
+    }
+
+    @Override
+    public int compareTo(@NonNull Payment o) {
+        return -this.getPaymentTime().compareTo(o.getPaymentTime());
     }
 }

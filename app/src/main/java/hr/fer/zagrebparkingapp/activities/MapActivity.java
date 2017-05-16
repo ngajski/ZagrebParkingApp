@@ -633,7 +633,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 if(numOfHours == 1 || zone.getPrice().endsWith("dan")) {
                     setParkingMarker();
                     SmsManager smsManager = SmsManager.getDefault();
-                    Utilities.generateSMS(this, car, zone, payment, smsManager);
+                   // Utilities.generateSMS(this, car, zone, payment, smsManager);
                     startNotificationService(car, zone, payment);
                 } else {
 

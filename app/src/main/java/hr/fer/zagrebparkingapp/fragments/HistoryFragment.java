@@ -26,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zagrebparkingapp.R;
@@ -101,15 +103,7 @@ public class HistoryFragment extends Fragment {
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
                     payments.add(child.getValue(Payment.class));
                 }
-
-                List<Payment> tempList = new ArrayList<Payment>();
-
-                if(payments != null && payments.size() != 0) {
-                    for (int i = payments.size() - 1; i >= 0; i--) {
-                        tempList.add(payments.get(i));
-                    }
-                    payments = tempList;
-                }
+                Collections.sort(payments);
                 arrayAdapter.notifyDataSetChanged();
             }
 
@@ -121,7 +115,7 @@ public class HistoryFragment extends Fragment {
 
         btnHome = (ImageButton) historyView.findViewById(R.id.btnHistoryPovratak);
         btnHome.setOnClickListener(v -> {
-            paymentsRef.setValue(payments);
+            Collections.sort(payments);
             Intent intent = new Intent();
             ((TabActivity)getActivity()).setResult(RESULT_OK, intent);
             ((TabActivity)getActivity()).finish();
