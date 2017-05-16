@@ -555,6 +555,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Spinner zoneSpinner = (Spinner) textEntryView.findViewById(R.id.zoneSpinner);
         TextView carTView = (TextView) textEntryView.findViewById(R.id.currentCar);
+        TextView carRegistrationView = (TextView) textEntryView.findViewById(R.id.currentRegistration);
         Spinner hoursSpinner = (Spinner) textEntryView.findViewById(R.id.numOfHours);
         TextView priceTView = (TextView) textEntryView.findViewById(R.id.priceSum);
 
@@ -562,6 +563,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         CarInfo carInfo = (CarInfo) registrationSpinner.getSelectedItem();
         if(carInfo != null) {
             carTView.setText(registrationSpinner.getSelectedItem().toString());
+            carRegistrationView.setText(((CarInfo) registrationSpinner.getSelectedItem()).getRegistrationNumber());
         } else {
             Intent intent = new Intent("hr.fer.zagrebparkingapp.activities.TabActivity");
             intent.putExtra("priority", "Cars");
@@ -614,10 +616,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         alert.setIcon(R.drawable.icon_car)
             .setTitle(title)
             .setView(textEntryView)
-            .setNegativeButton("NE",  (dialog, whichButton) -> {
-                dialog.dismiss();
-            })
-            .setPositiveButton("DA", (dialog, whichButton) -> {
+            .setNegativeButton("Da",  (dialog, whichButton) -> {
                 Coordinate coordinate = new Coordinate(currLat, currLong);
                 CarInfo car = (CarInfo) registrationSpinner.getSelectedItem();
                 Zone zone = (Zone) zoneSpinner.getSelectedItem();
@@ -644,6 +643,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                     startActivity(intent);
                 }
+
+            })
+            .setPositiveButton("Ne", (dialog, whichButton) -> {
+                dialog.dismiss();
             }
         );
         alert.setCancelable(false);

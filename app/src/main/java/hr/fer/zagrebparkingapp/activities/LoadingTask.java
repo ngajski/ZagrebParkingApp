@@ -47,13 +47,9 @@ public class LoadingTask extends AsyncTask<Integer, Integer, Void> {
     protected Void doInBackground(Integer... integers) {
         int numOfHours = integers[0];
         try {
-            if (numOfHours == 1) {
-                //Utilities.generateSMS(this, car, zone, payment);
-            } else {
-                for (int i = 0; i < numOfHours; i++) {
-                    //Utilities.generateSMS(context, car, zone, payment);
-                    Thread.sleep(3000);
-                }
+            for (int i = 0; i < numOfHours; i++) {
+                Utilities.generateSMS(context, car, zone, payment);
+                Thread.sleep(3000);
             }
         } catch (Exception ex) {
             Toast.makeText(context, "Neuspjelo plaćanje, IllegalArgument", Toast.LENGTH_LONG).show();
