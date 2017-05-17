@@ -17,7 +17,7 @@
     </group>
 
 
-        <item android:title="User">
+        <item android:title="">
             <menu>
                 <item
                     android:id="@+id/logout"
